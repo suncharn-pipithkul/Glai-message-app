@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, TextInput, Button } from 'react-native';
+import { Text, View, Button } from 'react-native';
+import { Input } from 'react-native-elements';
 import { globalStyles } from '../styles/globalStyles';
 
 export default function WelcomeScreen() {
@@ -7,9 +8,15 @@ export default function WelcomeScreen() {
         <View style={globalStyles.container}>
             <Text>Welcome!</Text>
             <Text>Sign In</Text>
-            <TextInput placeholder='Enter your Email'/>
-            <TextInput placeholder='Enter your password'/>
+            <Input
+                label='Email'
+                mode='outlined'
+                placeholder='Enter your Email'/>
+            <TextInput
+                label='Password'
+                placeholder='Enter your password'/>
             <Button title='LOGIN'></Button>
+            <Text>Don't have an Account? <Text style={{fontWeight: 'bold'}}>Sign up</Text></Text>
         </View>
     );
 }
