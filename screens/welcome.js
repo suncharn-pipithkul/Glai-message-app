@@ -12,7 +12,6 @@ export default function WelcomeScreen() {
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={globalStyles.container}>
-                <Text style={globalStyles.headerText}>Welcome!</Text>
                 <Text style={globalStyles.headerText}>Sign In</Text>
                 
                 <Input
@@ -34,15 +33,14 @@ export default function WelcomeScreen() {
                     buttonStyle={globalStyles.button}
                     title='LOGIN'
                     raised
-                    onPress={() => {
-                        console.log(`email=${email} | pass=${password}`);
-                        Keyboard.dismiss();
-                    }}
+                    onPress={() => console.log(`email=${email} | pass=${password}`)}
                     />
                     
-                <Text>Don't have an Account?
-                    <Text style={{fontWeight:'bold'}} onPress={() => console.log('sign up')}>Sign up</Text>
-                </Text>
+                <View style={{flex:1, justifyContent:'flex-end'}}>
+                    <Text>Don't have an Account?
+                        <Text style={{fontWeight:'bold'}} onPress={() => console.log('sign up')}> Sign up </Text>
+                    </Text>
+                </View>
             </View>
         </TouchableWithoutFeedback>
     );

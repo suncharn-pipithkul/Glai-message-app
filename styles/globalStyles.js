@@ -11,6 +11,9 @@ export const globalStyles = StyleSheet.create({
     headerText: {
         fontSize: 24,
         fontWeight: 'bold',
+        flex: 0.5,
+        textAlignVertical: 'center',
+        // backgroundColor: 'red',
     },
     button: {
         width: '100%',
