@@ -12,7 +12,8 @@ export default function WelcomeScreen() {
                 label='Email'
                 mode='outlined'
                 placeholder='Enter your Email'/>
-            <TextInput
+            <Input
+                secureTextEntry
                 label='Password'
                 placeholder='Enter your password'/>
             <Button title='LOGIN'></Button>
