@@ -20,7 +20,7 @@ export default function RegisterScreen(){
             <Input 
                 leftIcon={<Feather name="lock" size={24} color="black" />}
                 label='Password' 
-                secureTextEntry='true' 
+                secureTextEntry 
                 placeholder='password'/>
             <Button title='REGISTER'></Button>
         </View>
