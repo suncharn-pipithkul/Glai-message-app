@@ -10,5 +10,6 @@ import RegisterScreen from './screens/register';
 export default function App() {
   return (
     <WelcomeScreen />
+    // <RegisterScreen />
   );
 }
