@@ -6,7 +6,7 @@ import { globalStyles } from '../styles/globalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
-export default function WelcomeScreen() {
+export default function LoginScreen( { navigation } ) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -52,7 +52,7 @@ export default function WelcomeScreen() {
 
                         <View style={{flex:1, justifyContent:'flex-end'}}>
                             <Text>Don't have an Account?
-                                <Text style={{fontWeight:'bold'}} onPress={() => console.log('sign up')}> Sign up </Text>
+                                <Text style={{fontWeight:'bold'}} onPress={() => navigation.navigate('Register')}> Sign up </Text>
                             </Text>
                         </View>
                     </View>

@@ -5,7 +5,7 @@ import { globalStyles } from '../styles/globalStyles';
 import { Feather } from '@expo/vector-icons';
 
 
-export default function RegisterScreen(){
+export default function RegisterScreen( { navigation } ){
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={globalStyles.background}>
@@ -38,7 +38,7 @@ export default function RegisterScreen(){
                         />
                     <View style={{flex:1, justifyContent:'flex-end'}}>
                         <Text>Have an Account?
-                            <Text style={{fontWeight:'bold'}} onPress={() => console.log('sign in')}> Sign in </Text>
+                            <Text style={{fontWeight:'bold'}} onPress={() => navigation.navigate('Login')}> Sign in </Text>
                         </Text>
                     </View>
                 </View>
