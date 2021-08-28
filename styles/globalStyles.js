@@ -2,10 +2,11 @@ import { StyleSheet } from 'react-native';
 
 export const globalStyles = StyleSheet.create({
     background: {
-        backgroundColor: 'dodgerblue',
+        // backgroundColor: 'dodgerblue',
         flex:1, 
     },
     container: {
+        // backgroundColor: 'dodgerblue',
         margin: 32,
         flex: 1,
         alignItems: 'center',
@@ -14,8 +15,9 @@ export const globalStyles = StyleSheet.create({
     headerText: {
         fontSize: 24,
         fontWeight: 'bold',
-        flex: 0.5,
         textAlignVertical: 'center',
+        color: 'black',
+        // color: 'white',
         // backgroundColor: 'red',
     },
     button: {
