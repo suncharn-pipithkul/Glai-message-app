@@ -1,6 +1,6 @@
 // @refresh reset
 // import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { globalStyles } from './styles/globalStyles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -16,6 +16,8 @@ import MainScreen from './screens/main';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown:false}}>
