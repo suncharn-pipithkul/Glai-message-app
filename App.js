@@ -17,40 +17,30 @@ import MainScreen from './screens/main';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isFirstLaunch, setIsFirstLaunch] = useState(true);
+  const [viewedOnboarding, setViewedOnboarding] = useState(false);
+
+  const checkOnboarding = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@viewedOnboarding');
+      if (value !== null) {
+        setViewedOnboarding(true);
+      }
+    } catch(err) {
+      console.log('Error @checkOnboarding: ', err);
+    }
+  };
 
   useEffect(() => {
-    AsyncStorage.getItem('@isFirstLaunch')
-      .then(val => {
-        if (val) {
-          AsyncStorage.setItem('@isFirstLaunch', 'true');
-        } else {
-          AsyncStorage.setItem('@isFirstLaunch', 'false');
-          setIsFirstLaunch(false);
-        }
-      });
+    checkOnboarding();
   }, []);
 
-  if (isFirstLaunch) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown:false}}>
-          {isFirstLaunch && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
-          <Stack.Screen name='Login' component={LoginScreen} />
-          <Stack.Screen name='Register' component={RegisterScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-  else {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name='Login' component={LoginScreen} />
-          <Stack.Screen name='Register' component={RegisterScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-  
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+        {!viewedOnboarding && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
+        <Stack.Screen name='Login' component={LoginScreen} />
+        <Stack.Screen name='Register' component={RegisterScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }

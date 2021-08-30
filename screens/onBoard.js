@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, Image, TouchableOpacity } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function OnBoardScreen( { navigation }) {
@@ -23,13 +24,27 @@ export default function OnBoardScreen( { navigation }) {
         </TouchableOpacity>
     )
 
+    const logOnboarding = async () => {
+        try {
+            await AsyncStorage.setItem('@viewedOnboarding', 'true');
+        } catch(err) {
+            console.log('Error @logOnboarding: ', err);
+        }
+    }
+
     return (
         <Onboarding
             NextButtonComponent={NextButton}
             SkipButtonComponent={SkipButton}
             DoneButtonComponent={DoneButton}
-            onSkip={() => navigation.navigate('Login')}
-            onDone={() => navigation.navigate('Login')}
+            onSkip={() => {
+                logOnboarding();
+                navigation.navigate('Login');
+            }}
+            onDone={() => {
+                logOnboarding();
+                navigation.navigate('Login');
+            }}
             pages={[
                 {
                     backgroundColor: '#a6e4d0',

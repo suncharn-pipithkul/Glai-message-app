@@ -42,7 +42,7 @@ export default function LoginScreen( { navigation } ) {
                                 onPress={() => console.log(`email=${email} | pass=${password}`)}
                             />
                         {/* </View> */}
-                        <Text style={{marginTop:20}}>- OR -</Text>
+                        <Text style={{marginTop:20}}>- OR - {email}</Text>
                         <Text style={{marginTop:20}}>Sign in with</Text>
                         <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                             <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
