@@ -27,6 +27,7 @@ export default function OnBoardScreen( { navigation }) {
     const logOnboarding = async () => {
         try {
             await AsyncStorage.setItem('@viewedOnboarding', 'true');
+            console.log('logOnboarding');
         } catch(err) {
             console.log('Error @logOnboarding: ', err);
         }
