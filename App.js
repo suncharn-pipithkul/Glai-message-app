@@ -31,7 +31,9 @@ export default function App() {
   const checkOnboarding = async () => {
     try {
       const value = await AsyncStorage.getItem('@viewedOnboarding');
-      if (value !== null) {
+
+      // some data in local storage = viewed onboarding screen before
+      if (value !== null) {  
         setViewedOnboarding(true);
       }
     } catch(err) {
