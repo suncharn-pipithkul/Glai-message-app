@@ -48,35 +48,14 @@ export default function App() {
   if (loading) {
     return <LoadingScreen/>
   } else {
-    if (viewedOnboarding) {
-      return (
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown:false}}>
-            <Stack.Screen name='Login' component={LoginScreen} />
-            <Stack.Screen name='Register' component={RegisterScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      );
-    } else {
-      return (
-        <NavigationContainer>
+    return (
+      <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name='Onboard' component={OnBoardScreen} />
+          {!viewedOnboarding && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
           <Stack.Screen name='Login' component={LoginScreen} />
           <Stack.Screen name='Register' component={RegisterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-      );
-    }
+    );
   }
-  
-  // return (
-  //   <NavigationContainer>
-  //     <Stack.Navigator screenOptions={{headerShown:false}}>
-  //       {!viewedOnboarding && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
-  //       <Stack.Screen name='Login' component={LoginScreen} />
-  //       <Stack.Screen name='Register' component={RegisterScreen} />
-  //     </Stack.Navigator>
-  //   </NavigationContainer>
-  // );
 }
