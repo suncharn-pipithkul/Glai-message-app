@@ -14,11 +14,8 @@ export default function LoginScreen( { navigation } ) {
 
     const onLogin = async () => {
         try {
-            auth.signInWithEmailAndPassword(email, password).then((user) => {
-                alert('login');
-                navigation.navigate('Main');
-            });
-            
+            await auth.signInWithEmailAndPassword(email, password);
+            navigation.navigate('Main');
         } catch(err) {
             alert(err);
             console.log('@onRegister: ', err);
@@ -53,7 +50,6 @@ export default function LoginScreen( { navigation } ) {
                             buttonStyle={globalStyles.button}
                             title='LOGIN'
                             raised
-                            // onPress={() => console.log(`email=${email} | pass=${password}`)}
                             onPress={onLogin}
                         />
 
