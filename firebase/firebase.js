@@ -18,12 +18,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app = null;
-if (firebase.apps.length) {
-    app = firebase.initializeApp(firebaseConfig);
-} else {
-    app = firebase.app(); // default app
-}
+let app = firebase.initializeApp(firebaseConfig);
+// if (firebase.apps.length) {
+//     app = firebase.initializeApp(firebaseConfig);
+// } else {
+//     app = firebase.app(); // default app
+// }
 
 const db = app.firestore();
 const auth = firebase.auth();

@@ -56,6 +56,7 @@ export default function App() {
           {!viewedOnboarding && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
           <Stack.Screen name='Login' component={LoginScreen} />
           <Stack.Screen name='Register' component={RegisterScreen} />
+          <Stack.Screen name='Main' component={MainScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

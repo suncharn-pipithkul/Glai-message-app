@@ -39,11 +39,11 @@ export default function OnBoardScreen( { navigation }) {
             DoneButtonComponent={DoneButton}
             onSkip={() => {
                 logOnboarding();
-                navigation.navigate('Login');
+                navigation.replace('Login');
             }}
             onDone={() => {
                 logOnboarding();
-                navigation.navigate('Login');
+                navigation.replace('Login');
             }}
             pages={[
                 {

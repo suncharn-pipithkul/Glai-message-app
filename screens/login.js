@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { db, auth } from '../firebase/firebase';
+
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet, TextInput } from 'react-native';
 import { Input, Button, SocialIcon } from 'react-native-elements';
 import { Feather } from '@expo/vector-icons';
@@ -9,6 +11,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function LoginScreen( { navigation } ) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const onLogin = async () => {
+        try {
+            auth.signInWithEmailAndPassword(email, password).then((user) => {
+                alert('login');
+                navigation.navigate('Main');
+            });
+            
+        } catch(err) {
+            alert(err);
+            console.log('@onRegister: ', err);
+        }
+    };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -38,10 +53,11 @@ export default function LoginScreen( { navigation } ) {
                             buttonStyle={globalStyles.button}
                             title='LOGIN'
                             raised
-                            onPress={() => console.log(`email=${email} | pass=${password}`)}
+                            // onPress={() => console.log(`email=${email} | pass=${password}`)}
+                            onPress={onLogin}
                         />
 
-                        <Text style={{marginTop:20}}>- OR - {email}</Text>
+                        <Text style={{marginTop:20}}>- OR -</Text>
                         <Text style={{marginTop:20}}>Sign in with</Text>
                         <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                             <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
@@ -50,7 +66,7 @@ export default function LoginScreen( { navigation } ) {
 
                         <View style={{flex:1, justifyContent:'flex-end'}}>
                             <Text>Don't have an Account?
-                                <Text style={{fontWeight:'bold'}} onPress={() => navigation.navigate('Register')}> Sign up </Text>
+                                <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Register')}> Sign up </Text>
                             </Text>
                         </View>
                     </View>
