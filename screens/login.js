@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { db, auth } from '../firebase/firebase';
 // import firebase from 'firebase';
 // import { GoogleAuthProvider } from 'firebase/auth';
+import * as Google from 'expo-google-app-auth';
 
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet, TextInput } from 'react-native';
 import { Input, Button, SocialIcon } from 'react-native-elements';
@@ -26,22 +27,42 @@ export default function LoginScreen( { navigation } ) {
         }
     };
 
-    const onGoogle = async () => {
+    const signInWithGoogleAsync = async () => {
         try {
-            console.log('hi');
-            // const credential = auth.getRedirectResult();
-            // if (credential) {
-            //     let token = credential;
-            // }
-            // // const credential = await auth.signInWithPopup(googleProvider);
-            // // const user = credential.user;
-            // console.log(user.displayName);
-            // console.log(user.email);
-        } catch(err) {
-            alert(err);
-            console.log('@onGoogle: ', err);
+            console.log('google clicked');
+            const result = await Google.logInAsync({
+            behavior: 'web',
+            androidClientId: `432028272428-vblbfm59jbs4c14ov1rigrem33s5r9su.apps.googleusercontent.com`,
+            // iosClientId: YOUR_CLIENT_ID_HERE,
+            scopes: ['profile', 'email'],
+          });
+      
+          if (result.type === 'success') {
+            return result.accessToken;
+          } else {
+            return { cancelled: true };
+          }
+        } catch (e) {
+          return { error: true };
         }
-    };
+      }
+
+    // const onGoogle = async () => {
+    //     try {
+    //         console.log('hi');
+    //         // const credential = auth.getRedirectResult();
+    //         // if (credential) {
+    //         //     let token = credential;
+    //         // }
+    //         // // const credential = await auth.signInWithPopup(googleProvider);
+    //         // // const user = credential.user;
+    //         // console.log(user.displayName);
+    //         // console.log(user.email);
+    //     } catch(err) {
+    //         alert(err);
+    //         console.log('@onGoogle: ', err);
+    //     }
+    // };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -78,7 +99,7 @@ export default function LoginScreen( { navigation } ) {
                         <Text style={{marginTop:20}}>Sign in with</Text>
                         <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                             <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
-                            <SocialIcon type='google' raised onPress={onGoogle}/>
+                            <SocialIcon type='google' raised onPress={() => signInWithGoogleAsync()}/>
                         </View>
 
                         <View style={{flex:1, justifyContent:'flex-end'}}>
