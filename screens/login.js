@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebase/firebase';
+// import firebase from 'firebase';
+// import { GoogleAuthProvider } from 'firebase/auth';
 
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet, TextInput } from 'react-native';
 import { Input, Button, SocialIcon } from 'react-native-elements';
 import { Feather } from '@expo/vector-icons';
 import { globalStyles } from '../styles/globalStyles';
 import { LinearGradient } from 'expo-linear-gradient';
+
+// const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 
 export default function LoginScreen( { navigation } ) {
@@ -19,6 +23,23 @@ export default function LoginScreen( { navigation } ) {
         } catch(err) {
             alert(err);
             console.log('@onRegister: ', err);
+        }
+    };
+
+    const onGoogle = async () => {
+        try {
+            console.log('hi');
+            // const credential = auth.getRedirectResult();
+            // if (credential) {
+            //     let token = credential;
+            // }
+            // // const credential = await auth.signInWithPopup(googleProvider);
+            // // const user = credential.user;
+            // console.log(user.displayName);
+            // console.log(user.email);
+        } catch(err) {
+            alert(err);
+            console.log('@onGoogle: ', err);
         }
     };
 
@@ -57,7 +78,7 @@ export default function LoginScreen( { navigation } ) {
                         <Text style={{marginTop:20}}>Sign in with</Text>
                         <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                             <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
-                            <SocialIcon type='google' raised onPress={() => console.log('google')}/>
+                            <SocialIcon type='google' raised onPress={onGoogle}/>
                         </View>
 
                         <View style={{flex:1, justifyContent:'flex-end'}}>

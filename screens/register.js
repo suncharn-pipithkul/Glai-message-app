@@ -13,6 +13,7 @@ export default function RegisterScreen( { navigation } ){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    
     const onRegister = async () => {
         try {
             // create user in firebase auth
