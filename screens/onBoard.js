@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Text, Image, TouchableOpacity } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +24,7 @@ export default function OnBoardScreen( { navigation }) {
         </TouchableOpacity>
     )
 
+    // Function that log that user viewed onboarding screen in Asyncstorage
     const logOnboarding = async () => {
         try {
             await AsyncStorage.setItem('@viewedOnboarding', 'true');

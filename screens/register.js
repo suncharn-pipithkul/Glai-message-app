@@ -1,51 +1,28 @@
-import React, { useState } from 'react';
-import { db, auth } from '../firebase/firebase';
+import React, { useState, useContext } from 'react';
 
-import { Text, View, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import { globalStyles } from '../styles/globalStyles';
-import { Feather } from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
+
+// Context
+import { AuthContext } from '../context/AuthContext';
 
 
-export default function RegisterScreen( { navigation } ){
+export default function RegisterScreen({ navigation }) {
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const { onRegister } = useContext(AuthContext);
 
-    
-    const onRegister = async () => {
-        try {
-            // create user in firebase auth
-            const authentication = await auth.createUserWithEmailAndPassword(email, password);  
-
-            // store user profile in firestore
-            const { user } = authentication;
-            const { uid } = user;
-            console.log(`authentication = ${authentication}`);
-            console.log(`uid = ${uid}`);
-            // const userAdditionalData = {
-            //     userName: userName,
-            //     user_id: uid,
-            // };
-            // await db.collection('users').doc(uid).set(userAdditionalData);
-
-            // Add username to user profile
-            const newUser = await auth.currentUser.updateProfile({displayName:userName});
-            console.log(newUser);
-
-            navigation.navigate('Main');
-        } catch(err) {
-            alert(err);
-            console.log('@onRegister: ', err);
-        }
-    };
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={globalStyles.background}>
                 <View style={globalStyles.container}>
-                    <Text style={[{flex:0.5}, globalStyles.headerText]}>Register screen</Text>
+                    <Text style={[{flex:0.5}, globalStyles.headerText]}>Register</Text>
+
                     <Input 
                         leftIcon={<Feather name="user" size={24} color="black" />}
                         label='Username' 
@@ -78,9 +55,9 @@ export default function RegisterScreen( { navigation } ){
                         buttonStyle={globalStyles.button}
                         raised
                         onPress={() => {
-                            onRegister();
+                            if (userName && email && password) onRegister(userName, email, password);
                         }}
-                        />
+                    />
                     <View style={{flex:1, justifyContent:'flex-end'}}>
                         <Text>Have an Account?
                             <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Login')}> Sign in </Text>
@@ -91,3 +68,7 @@ export default function RegisterScreen( { navigation } ){
         </TouchableWithoutFeedback>
     );
 }
+
+
+
+const styles = StyleSheet.create({});

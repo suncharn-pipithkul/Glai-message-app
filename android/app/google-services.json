@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "745900964307",
+    "project_id": "glaimessage",
+    "storage_bucket": "glaimessage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745900964307:android:df5ad575bc0398ca4fd726",
+        "android_client_info": {
+          "package_name": "com.glaimessage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745900964307-sr0m84b8hg07fk62fgelapj94usnru2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.glaimessage",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "745900964307-88lbc0f8ao1ur13rgg4ejr86675o8298.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQtdsoaT1vMP5vcb0QZxP6B21x1O3OP48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745900964307-88lbc0f8ao1ur13rgg4ejr86675o8298.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
