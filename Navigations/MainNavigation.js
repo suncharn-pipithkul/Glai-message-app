@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import 
+{ StyleSheet, 
+  Text, 
+  View,
+  Button, 
+  Image,
+  TouchableHighlight,
+  ActivityIndicator} from 'react-native';
+import { Avatar } from 'react-native-elements';
+
 // Context
 import { AuthContext } from '../context/AuthContext';
 
@@ -20,6 +29,7 @@ import OnBoardScreen from '../screens/onBoard';
 import LoginScreen from '../screens/login';
 import RegisterScreen from '../screens/register';
 import MainScreen from '../screens/main';
+import ChatScreen from '../screens/chat';
 
 
 const Stack = createNativeStackNavigator(); // Stack Navigator
@@ -71,8 +81,25 @@ export default function MainNavigation() {
 
   const AppStack = () => {
     return (
-      <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name='Main' component={MainScreen} />
+      <Stack.Navigator>
+          <Stack.Screen name='Main' component={MainScreen} 
+            options={{
+              title:'Chats',
+              headerTintColor: '#fff',
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: '#046abd',
+                shadowColor: 'tansparent',
+              },
+              headerLeft: () => (
+                <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginRight:15}} onPress={() => console.log('i did it')}>
+                  <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/blank-profile-picture.png')}/>
+                </TouchableHighlight>
+              ),
+              }}/>
+          <Stack.Screen name='Chat' component={ChatScreen}/>
       </Stack.Navigator>
     );
   };
@@ -93,7 +120,7 @@ export default function MainNavigation() {
     GoogleSignin.configure({
         webClientId: '745900964307-88lbc0f8ao1ur13rgg4ejr86675o8298.apps.googleusercontent.com',
     });
-  }, [])
+  }, []);
 
   if (loading) {
     return <LoadingScreen/>

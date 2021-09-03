@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet} from 'react-native';
+import { StatusBar, StyleSheet} from 'react-native';
 // Context
 import { AuthProvider } from './context/AuthContext';
 
@@ -10,6 +10,7 @@ import MainNavigation from './Navigations/MainNavigation';
 export default function App() {
   return (
     <AuthProvider>
+      <StatusBar barStyle = 'dark-content' translucent/>
       <MainNavigation/>
     </AuthProvider>
   );
