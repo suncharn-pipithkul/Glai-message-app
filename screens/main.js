@@ -5,7 +5,10 @@ import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
     , UserImgWrapper, UserInfo, UserName, MessageText
     , SendAtText, MainTextWrapper, TopTextWrapper
-    , BottomTextWrapper } from '../styleComponents/MessagesStyles';
+    , BottomTextWrapper } 
+from '../styleComponents/MessagesStyles';
+
+import { useHeaderHeight } from '@react-navigation/elements';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
@@ -30,6 +33,8 @@ export default function MainScreen({ navigation }) {
         setRefeshing(true);
         setRefeshing(false);
     }, [refreshing])
+
+    console.log(useHeaderHeight());
 
     return (
         <Container>
