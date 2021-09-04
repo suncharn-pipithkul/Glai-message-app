@@ -1,15 +1,84 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
-import { Container, Card, MiddleTextWrapper, UserImg
+import { SearchBar2 } from '../components/Searchbar';
+import { SearchBar } from 'react-native-elements';
+import { Container, Card, UserImg
     , UserImgWrapper, UserInfo, UserName, MessageText
-    , EndTextWrapper, SendAtText, MainTextWrapper, TopTextWrapper, BottomTextWrapper } from '../components/MessagesStyles';
+    , SendAtText, MainTextWrapper, TopTextWrapper
+    , BottomTextWrapper } from '../styleComponents/MessagesStyles';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
 
 // styles
 import { globalStyles } from '../styles/globalStyles';
+
+// a function that cut off the text longer than MAX_LENGTH and put ...
+const textDisplayFormat = (text) => {
+    const MAX_LENGTH = 30;
+    if (text.trim().length < MAX_LENGTH)
+        return text.trim()
+    return `${text.trim().substr(0, MAX_LENGTH)}...`
+};
+
+export default function MainScreen({ navigation }) {
+    const { user, onSignout } = useContext(AuthContext);
+    const [refreshing, setRefeshing] = useState(false);
+    const [searchText, setSearchText] = useState('');
+
+    const onRefresh = useCallback( async () => {
+        setRefeshing(true);
+        setRefeshing(false);
+    }, [refreshing])
+
+    return (
+        <Container>
+            <SearchBar/>
+            <FlatList
+                data={example}
+                keyExtractor={item => item.id}
+                ListHeaderComponent={() => <SearchBar2></SearchBar2>}
+
+                showsVerticalScrollIndicator={false}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                renderItem={({ item }) => (
+                    <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat')}>
+                        <UserInfo>
+                            <UserImgWrapper>
+                                <UserImg source={item.userImg}/>
+                            </UserImgWrapper>
+
+                            <MainTextWrapper>
+                                <TopTextWrapper>
+                                    <UserName>{textDisplayFormat(item.user)}</UserName>
+                                    <SendAtText>{item.sendAt}</SendAtText>
+                                </TopTextWrapper>
+
+                                <BottomTextWrapper>
+                                    <MessageText>{textDisplayFormat(item.recentMessage)}</MessageText>
+                                </BottomTextWrapper>
+                            </MainTextWrapper>
+                        </UserInfo>
+                    </Card>
+                )}
+            />
+
+            <Button 
+                title='SIGN OUT'
+                containerStyle={globalStyles.button} 
+                buttonStyle={globalStyles.button}
+                raised
+                onPress={() => onSignout()}
+            />
+        </Container>
+    );
+}
+
+
+
+const styles = StyleSheet.create({});
 
 const example = [
     {
@@ -76,72 +145,3 @@ const example = [
         sendAt: '1:20 am'
     },
 ];
-
-// a function that cut off the text longer than MAX_LENGTH and put ...
-const textDisplayFormat = (text) => {
-    const MAX_LENGTH = 30;
-    if (text.trim().length < MAX_LENGTH)
-        return text.trim()
-    return `${text.trim().substr(0, MAX_LENGTH)}...`
-};
-
-export default function MainScreen({ navigation }) {
-    const { user, onSignout } = useContext(AuthContext);
-    const [refreshing, setRefeshing] = useState(false);
-
-    const onRefresh = useCallback( async () => {
-        setRefeshing(true);
-        setRefeshing(false);
-    }, [refreshing])
-
-    return (
-        <Container>
-            <FlatList
-                style={{width:'100%'}}
-                data={example}
-                keyExtractor={item => item.id}
-                // showsVerticalScrollIndicator={true}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                renderItem={({ item }) => (
-                    <Card activeOpacity={0.5} onPress={() => alert(item.user)}>
-                        <UserInfo>
-                            <UserImgWrapper>
-                                <UserImg source={item.userImg}/>
-                            </UserImgWrapper>
-
-                            <MainTextWrapper>
-                                <TopTextWrapper>
-                                    <UserName>{textDisplayFormat(item.user)}</UserName>
-                                    <SendAtText>{item.sendAt}</SendAtText>
-                                </TopTextWrapper>
-
-                                <BottomTextWrapper>
-                                    <MessageText>{textDisplayFormat(item.recentMessage)}</MessageText>
-                                </BottomTextWrapper>
-                            </MainTextWrapper>
-                        </UserInfo>
-                    </Card>
-                )}
-            />
-            <Button 
-                title='Chat Room'
-                containerStyle={[globalStyles.button, {marginBottom:10}]} 
-                buttonStyle={globalStyles.button}
-                raised
-                onPress={() => navigation.navigate('Chat')}
-            />
-            <Button 
-                title='SIGN OUT'
-                containerStyle={globalStyles.button} 
-                buttonStyle={globalStyles.button}
-                raised
-                onPress={() => onSignout()}
-            />
-        </Container>
-    );
-}
-
-
-
-const styles = StyleSheet.create({});

@@ -1,0 +1,107 @@
+import styled from 'styled-components';
+
+
+export const Container = styled.View`
+  flex: 1;
+  background-color: #ffffff;
+  /* background-color: black; */
+  /* border-radius: 15px; */
+`;
+
+export const Card = styled.TouchableOpacity`
+    /* background-color: yellowgreen; */
+    /* border-radius: 15px; */
+`;
+
+export const UserInfo = styled.View`
+    flex-direction: row;
+    /* background-color: peru; */
+    /* border-radius: 25px; */
+`;
+
+export const UserImgWrapper = styled.View`
+    padding: 10px;
+    align-self: center;
+    justify-content: center;
+    /* background-color: crimson; */
+    /* border-radius: 20px; */
+`;
+
+export const UserImg = styled.Image`
+    width: 55px;
+    height: 55px;
+    border-radius: 35px;
+`;
+
+export const MainTextWrapper = styled.View`
+    flex: 1;
+    /* justify-content: space-around; */
+    justify-content: space-evenly;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    /* border-bottom-width: 1px; */
+    border-bottom-color: #cccccc;
+    /* background-color: skyblue; */
+    border-radius: 10px;
+`;
+
+export const TopTextWrapper = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    /* background-color: forestgreen; */
+    /* border-radius: 5px; */
+`;
+
+export const UserName = styled.Text`
+    font-size: 18px;
+    font-weight: bold;
+    color: #444444;
+`;
+
+export const SendAtText = styled.Text`
+    font-size: 14px;
+    color: #ababab;
+`;
+
+export const BottomTextWrapper = styled.View`
+    /* background-color: antiquewhite; */
+    /* border-radius: 5px; */
+`;
+
+export const MessageText = styled.Text`
+    font-size: 14px;
+    color: #525252;
+`;
+
+export const SearchBarContainer = styled.TouchableOpacity`
+    flex: 1;
+    flex-direction: row;
+
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 16px;
+    padding-right: 12px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+
+    border-radius: 40px;
+
+    background-color: #eee;
+    align-items: center;
+`;
+
+export const SearchBarIconWrapper = styled.TouchableOpacity`
+    /* background-color: skyblue; */
+`;
+
+export const SearchBarInput = styled.TextInput`
+    flex: 1;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    font-size: 16px;
+
+    /* background-color: red; */
+`;

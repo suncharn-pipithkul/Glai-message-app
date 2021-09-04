@@ -87,15 +87,11 @@ export default function MainNavigation() {
               title:'Chats',
               headerTintColor: '#fff',
               headerStyle: {
-                elevation: 0,
-                shadowOpacity: 0,
-                borderBottomWidth: 0,
                 backgroundColor: '#046abd',
-                shadowColor: 'tansparent',
               },
               headerLeft: () => (
                 <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginRight:15}} onPress={() => console.log('i did it')}>
-                  <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/blank-profile-picture.png')}/>
+                  <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
                 </TouchableHighlight>
               ),
               }}/>
