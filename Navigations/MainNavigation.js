@@ -95,7 +95,10 @@ export default function MainNavigation() {
                 </TouchableHighlight>
               ),
               }}/>
-          <Stack.Screen name='Chat' component={ChatScreen}/>
+          <Stack.Screen 
+            name='Chat' 
+            component={ChatScreen}
+            options={({ route }) => ({title:route.params.userName})}/>
       </Stack.Navigator>
     );
   };

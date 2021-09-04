@@ -9,6 +9,8 @@ export const Container = styled.View`
 `;
 
 export const Card = styled.TouchableOpacity`
+    padding-left: 5px;
+    padding-right: 5px;
     /* background-color: yellowgreen; */
     /* border-radius: 15px; */
 `;

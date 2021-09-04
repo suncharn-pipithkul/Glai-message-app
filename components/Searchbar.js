@@ -6,7 +6,7 @@ import {
     SearchBarInput } from '../styleComponents/MessagesStyles';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export const SearchBar2 = () => {
+export const SearchBar = () => {
     const [searchText, setSearchText] = useState('');
     const input = useRef();
 
@@ -21,8 +21,7 @@ export const SearchBar2 = () => {
             <SearchBarInput 
                 ref={input} 
                 placeholder='Search' 
-                returnKeyType='search' 
-                selectionColor='#c7e6ff'
+                returnKeyType='search'
                 onChangeText={text => setSearchText(text)}/>
             {searchText ?
                 <SearchBarIconWrapper
