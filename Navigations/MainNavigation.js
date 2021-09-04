@@ -81,14 +81,13 @@ export default function MainNavigation() {
 
   const AppStack = () => {
     return (
-      <Stack.Navigator screenOptions={{headerStyle:{height:20}}}>
+      <Stack.Navigator>
           <Stack.Screen name='Main' component={MainScreen} 
             options={{
               title:'Chats',
               headerTintColor: '#fff',
               headerStyle: {
                 backgroundColor: '#046abd',
-                flex: 1,
               },
               headerLeft: () => (
                 <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginRight:15}} onPress={() => console.log('i did it')}>

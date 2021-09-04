@@ -10,7 +10,7 @@ import MainNavigation from './Navigations/MainNavigation';
 export default function App() {
   return (
     <AuthProvider>
-      <StatusBar barStyle = 'dark-content' translucent/>
+      {/* <StatusBar barStyle = 'dark-content'/> */}
       <MainNavigation/>
     </AuthProvider>
   );
