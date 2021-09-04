@@ -34,8 +34,8 @@ export default function MainScreen({ navigation }) {
 
     return (
         <Container>
-            <SearchBar/>
             <FlatList
+                keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
                 ListHeaderComponent={() => <SearchBar2></SearchBar2>}
