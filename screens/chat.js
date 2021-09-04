@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-elements';
+import { GiftedChat } from 'react-native-gifted-chat'
 
 // Context
 import { AuthContext } from '../context/AuthContext';
@@ -11,6 +12,7 @@ import { globalStyles } from '../styles/globalStyles';
 
 export default function ChatScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
+    const [messages, setMessages] = useState([]);
 
     return (
         <View>

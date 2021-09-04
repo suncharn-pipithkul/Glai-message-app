@@ -57,6 +57,7 @@ export const TopTextWrapper = styled.View`
 `;
 
 export const UserName = styled.Text`
+    width: 80%;
     font-size: 18px;
     font-weight: bold;
     color: #444444;
@@ -73,6 +74,7 @@ export const BottomTextWrapper = styled.View`
 `;
 
 export const MessageText = styled.Text`
+    width: 80%;
     font-size: 14px;
     color: #525252;
 `;

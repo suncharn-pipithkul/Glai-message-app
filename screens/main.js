@@ -51,12 +51,12 @@ export default function MainScreen({ navigation }) {
 
                             <MainTextWrapper>
                                 <TopTextWrapper>
-                                    <UserName>{textDisplayFormat(item.userName)}</UserName>
+                                    <UserName numberOfLines={1}>{item.userName}</UserName>
                                     <SendAtText>{item.sendAt}</SendAtText>
                                 </TopTextWrapper>
 
                                 <BottomTextWrapper>
-                                    <MessageText>{textDisplayFormat(item.recentMessage)}</MessageText>
+                                    <MessageText numberOfLines={1}>{item.recentMessage}</MessageText>
                                 </BottomTextWrapper>
                             </MainTextWrapper>
                         </UserInfo>
@@ -118,7 +118,7 @@ const example = [
     {
         id: '6',
         userImg: require('../assets/profileImg/user-5.jpg'),
-        userName: 'Hammy',
+        userName: 'Internal state is not preserved when content scrolls out of the render window',
         recentMessage: 'Meow meow.',
         sendAt: '1:20 am'
     },
