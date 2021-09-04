@@ -24,12 +24,17 @@ export const SearchBar2 = () => {
                 returnKeyType='search' 
                 selectionColor='#c7e6ff'
                 onChangeText={text => setSearchText(text)}/>
-            <SearchBarIconWrapper 
-                accessible
-                accessibleLabel='Clear search'
-                onPress={() => input.current.clear()}>
-                <MaterialIcons name="cancel" size={18} color="#808080" />
-            </SearchBarIconWrapper>
+            {searchText ?
+                <SearchBarIconWrapper
+                    accessible
+                    accessibleLabel='Clear search'
+                    onPress={() => {
+                        setSearchText('');
+                        input.current.clear();
+                    }}>
+                    <MaterialIcons name="cancel" size={18} color="#808080" />
+                </SearchBarIconWrapper> : null
+            }
         </SearchBarContainer>
     );
 };
