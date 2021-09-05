@@ -23,6 +23,7 @@ export default function LoginScreen({ navigation }) {
     const emailInput = useRef();
     const passwordInput = useRef();
 
+    // on submit form
     const onSubmit = useCallback(async () => {
             if (email && password) {
                 const loginStatus = await onLogin(email, password)
@@ -47,6 +48,7 @@ export default function LoginScreen({ navigation }) {
         [rememberMe, email, password] // onSubmit rerender only if email/password or rememberMe input changed
     );
     
+    // get stored bool value
     const getCheck = async () => {
         try {
             const value = await AsyncStorage.getItem('@rememberMe');
@@ -58,6 +60,7 @@ export default function LoginScreen({ navigation }) {
         }
     };
 
+    // retrieve stored data
     const getStoredData = async (storageKey) => {
         try {
             const value = await AsyncStorage.getItem(storageKey);
@@ -69,6 +72,7 @@ export default function LoginScreen({ navigation }) {
         }
     };
 
+    // clear stored data
     const clearStoredUser = async () => {
         try {
             await AsyncStorage.removeItem('@rememberMe');
@@ -80,6 +84,7 @@ export default function LoginScreen({ navigation }) {
         }
     }
 
+    // get stored email password rememberMe on first render
     useEffect(() => {
         const asyncWrap = async () => {
             const check = await getCheck();
@@ -95,7 +100,6 @@ export default function LoginScreen({ navigation }) {
             }
         };
         asyncWrap();
-        console.log(`check: ${rememberMe}`);
     }, []);
 
     return (
@@ -126,10 +130,15 @@ export default function LoginScreen({ navigation }) {
                         onSubmitEditing={() => onSubmit()}
                         onChangeText={ text => setPassword(text)}
                     />
+                    <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end'}}>
+                        <TouchableOpacity onPress={() => console.log('forgot password?')}>
+                            <Text style={{fontWeight:'bold', color:'#046abd'}}>Forgot password?</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     <CheckBox
                         title='Remember me'
-                        containerStyle={{width:'100%', backgroundColor:'white', borderWidth:0, margin:0, paddingTop:0, paddingBottom:0}}
+                        containerStyle={{width:'100%', backgroundColor:'white', borderWidth:0, margin:0}}
                         Component={View}
                         checked={rememberMe}
                         onIconPress={() => {
@@ -146,18 +155,18 @@ export default function LoginScreen({ navigation }) {
                         onPress={() => onSubmit()}
                     />
 
-                    {/* <Text style={{marginTop:20}}>- OR -</Text> */}
-                    {/* <Text style={{marginTop:20}}>Sign in with</Text> */}
-                    {/* <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
+                    <Text style={{marginTop:20}}>- OR -</Text>
+                    <Text style={{marginTop:20}}>Sign in with</Text>
+                    <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                         <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
                         <SocialIcon type='google' raised onPress={() => onGoogleSignin()}/>
-                    </View> */}
-                    <GoogleSigninButton
+                    </View>
+                    {/* <GoogleSigninButton
                         style={{marginTop: 16}}
                         size={GoogleSigninButton.Size.Wide}
                         color={GoogleSigninButton.Color.Dark}
                         onPress={() => onGoogleSignin()}
-                    />
+                    /> */}
 
                     <View style={{flex:1, justifyContent:'flex-end'}}>
                         <View style={{flexDirection:'row'}}>
