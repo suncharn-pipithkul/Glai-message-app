@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import { Input, Button, SocialIcon } from 'react-native-elements';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { Input, Button, CheckBox, SocialIcon } from 'react-native-elements';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Feather from 'react-native-vector-icons/Feather';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
@@ -15,6 +15,7 @@ import { AuthContext } from '../context/AuthContext';
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState('');
     const { onLogin, onGoogleSignin } = useContext(AuthContext);
     const emailInput = useRef();
     const passwordInput = useRef();
@@ -46,8 +47,16 @@ export default function LoginScreen({ navigation }) {
                         onChangeText={ text => setPassword(text)}
                     />
 
+                    <CheckBox
+                        title='Remember me'
+                        containerStyle={{width:'100%', backgroundColor:'white', borderWidth:0, margin:0, paddingTop:0, paddingBottom:0}}
+                        Component={View}
+                        checked={rememberMe}
+                        onIconPress={() => setRememberMe(prev => !prev)}
+                    />
+
                     <Button 
-                        containerStyle={globalStyles.button} 
+                        containerStyle={[globalStyles.button, {marginTop:16}]} 
                         buttonStyle={globalStyles.button}
                         title='LOGIN'
                         raised
