@@ -58,27 +58,16 @@ export default function LoginScreen({ navigation }) {
         }
     };
 
-    const getStoredEmail = async () => {
+    const getStoredData = async (storageKey) => {
         try {
-            const value = await AsyncStorage.getItem('@email');
+            const value = await AsyncStorage.getItem(storageKey);
             return value === null ? null : value;
         } catch(err) {
             alert(err);
-            console.log('Error @getStoredEmail: ', err);
+            console.log('Error @getStoredData: ', err);
             return '';
         }
     };
-
-    const getStoredPassword = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@password');
-            return value === null ? null : value;
-        } catch(err) {
-            alert(err);
-            console.log('Error @getStoredPassword: ', err);
-            return '';
-        }
-    }
 
     const clearStoredUser = async () => {
         try {
@@ -99,8 +88,8 @@ export default function LoginScreen({ navigation }) {
             }
 
             if (check) {
-                const storedEmail = await getStoredEmail();
-                const storedPassword = await getStoredPassword();
+                const storedEmail = await getStoredData('@email');
+                const storedPassword = await getStoredData('@password');
                 setEmail(JSON.parse(storedEmail));
                 setPassword(JSON.parse(storedPassword));
             }
@@ -143,7 +132,10 @@ export default function LoginScreen({ navigation }) {
                         containerStyle={{width:'100%', backgroundColor:'white', borderWidth:0, margin:0, paddingTop:0, paddingBottom:0}}
                         Component={View}
                         checked={rememberMe}
-                        onIconPress={() => setRememberMe(prev => !prev)}
+                        onIconPress={() => {
+                            setRememberMe(prev => !prev);
+                            clearStoredUser();
+                        }}
                     />
 
                     <Button 
