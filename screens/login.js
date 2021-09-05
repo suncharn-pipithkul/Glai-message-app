@@ -1,6 +1,7 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Input, Button, SocialIcon } from 'react-native-elements';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import Feather from 'react-native-vector-icons/Feather';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
@@ -55,23 +56,26 @@ export default function LoginScreen({ navigation }) {
                         }}
                     />
 
-                    <Text style={{marginTop:20}}>- OR -</Text>
+                    {/* <Text style={{marginTop:20}}>- OR -</Text> */}
                     {/* <Text style={{marginTop:20}}>Sign in with</Text> */}
                     {/* <View style={{marginTop: 20, flex:1, flexDirection:'row'}}>
                         <SocialIcon type='facebook' raised onPress={() => console.log('fb')}/>
                         <SocialIcon type='google' raised onPress={() => onGoogleSignin()}/>
                     </View> */}
                     <GoogleSigninButton
-                        style={{borderRadius: 30}}
+                        style={{marginTop: 16}}
                         size={GoogleSigninButton.Size.Wide}
                         color={GoogleSigninButton.Color.Dark}
                         onPress={() => onGoogleSignin()}
                     />
 
                     <View style={{flex:1, justifyContent:'flex-end'}}>
-                        <Text>Don't have an Account?
-                            <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Register')}> Sign up </Text>
-                        </Text>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>Don't have an Account?</Text>
+                            <TouchableOpacity>
+                                <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Register')}> Sign up </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                 </View>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useContext } from 'react';
 
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { Input, Button } from 'react-native-elements';
 import { globalStyles } from '../styles/globalStyles';
 import Feather from 'react-native-vector-icons/Feather';
@@ -77,9 +78,12 @@ export default function RegisterScreen({ navigation }) {
                         }}
                     />
                     <View style={{flex:1, justifyContent:'flex-end'}}>
-                        <Text>Have an Account?
-                            <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Login')}> Sign in </Text>
-                        </Text>
+                        <View style={{flexDirection:'row'}}>
+                            <Text>Have an Account?</Text>
+                            <TouchableOpacity>
+                                <Text style={{fontWeight:'bold'}} onPress={() => navigation.replace('Login')}> Sign in </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>
