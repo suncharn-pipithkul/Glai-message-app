@@ -23,6 +23,8 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
+
 
 // screens
 import OnBoardScreen from '../screens/onBoard';
@@ -32,7 +34,8 @@ import MainScreen from '../screens/main';
 import ChatScreen from '../screens/chat';
 
 
-const Stack = createNativeStackNavigator(); // Stack Navigator
+// const Stack = createNativeStackNavigator(); // Native Stack Navigator
+const Stack = createStackNavigator();
 
 const LoadingScreen = () => {
   return (
@@ -81,20 +84,24 @@ export default function MainNavigation() {
 
   const AppStack = () => {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown:false}}>
           <Stack.Screen name='Main' component={MainScreen} 
-            options={{
-              title:'Chats',
-              headerTintColor: '#fff',
-              headerStyle: {
-                backgroundColor: '#046abd',
-              },
-              headerLeft: () => (
-                <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginRight:15}} onPress={() => console.log('i did it')}>
-                  <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
-                </TouchableHighlight>
-              ),
-          }}/>
+          //   options={{
+          //     title:'Chats',
+          //     // headerTintColor: '#fff',
+          //     headerStyle: {
+          //       // backgroundColor: '#046abd',
+          //       shadowOpacity: 0, // This is for ios
+          //       elevation: 0, // This is for android
+          //       shadowColor: 'transparent',
+          //     },
+          //     headerLeft: () => (
+          //       <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:15,}} onPress={() => console.log('i did it')}>
+          //         <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
+          //       </TouchableHighlight>
+          //     ),
+          // }}
+          />
           <Stack.Screen 
             name='Chat' 
             component={ChatScreen}

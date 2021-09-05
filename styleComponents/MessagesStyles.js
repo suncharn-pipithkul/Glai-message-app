@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 
 export const Container = styled.View`
-  flex: 3;
+  flex: 1;
   background-color: #ffffff;
   /* background-color: black; */
   /* border-radius: 15px; */
@@ -83,14 +83,9 @@ export const SearchBarContainer = styled.TouchableOpacity`
     flex: 1;
     flex-direction: row;
 
-    margin-top: 10px;
-    margin-left: 5px;
-    margin-right: 5px;
-    padding-left: 16px;
-    padding-right: 12px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-
+    min-height: 40px;
+    margin: 8px 16px 8px 16px;  /* top right bottom left */
+    padding: 8px 16px 8px 16px;
     border-radius: 40px;
 
     background-color: #eee;

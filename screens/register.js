@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Input, Button } from 'react-native-elements';
@@ -15,6 +15,10 @@ export default function RegisterScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const { onRegister } = useContext(AuthContext);
+    const userNameInput = useRef();
+    const emailInput = useRef();
+    const passwordInput = useRef();
+    const confirmPasswordInput = useRef();
 
 
     return (
@@ -24,29 +28,43 @@ export default function RegisterScreen({ navigation }) {
                     <Text style={[{flex:0.5}, globalStyles.headerText]}>Register</Text>
 
                     <Input 
+                        ref={userNameInput}
                         leftIcon={<Feather name="user" size={24} color="black" />}
                         label='Username' 
                         placeholder='Enter username'
+                        returnKeyType='next'
+                        onSubmitEditing={() => emailInput.current.focus()}
+                        blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setUserName(text)}
                     />
                     <Input 
+                        ref={emailInput}
                         leftIcon={<Feather name="mail" size={24} color="black" />}
                         label='Email Address' 
                         placeholder='Enter email address'
+                        returnKeyType='next'
+                        onSubmitEditing={() => passwordInput.current.focus()}
+                        blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setEmail(text)}
                     />
                     <Input 
+                        ref={passwordInput}
                         leftIcon={<Feather name="lock" size={24} color="black" />}
                         label='Password' 
                         secureTextEntry 
                         placeholder='Enter your password'
+                        returnKeyType='next'
+                        onSubmitEditing={() => confirmPasswordInput.current.focus()}
+                        blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setPassword(text)}
                     />
                     <Input 
+                        ref={confirmPasswordInput}
                         leftIcon={<Feather name="lock" size={24} color="black" />}
                         label='Confirm Password' 
                         secureTextEntry 
                         placeholder='Confirm password'
+                        onSubmitEditing={() => {if (userName && email && password) onRegister(userName, email, password)}}
                         onChangeText={ text => setConfirmPassword(text)}
                     />
                     <Button 

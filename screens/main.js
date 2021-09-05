@@ -38,11 +38,12 @@ export default function MainScreen({ navigation }) {
 
     return (
         <Container>
+            <SearchBar/>
             <FlatList
                 keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
-                ListHeaderComponent={() => <SearchBar/>}
+                // ListHeaderComponent={() => <SearchBar/>}
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
@@ -144,6 +145,27 @@ const example = [
     {
         id: '9',
         userImg: require('../assets/profileImg/user-8.jpg'),
+        userName: 'Hammy',
+        recentMessage: 'Meow meow.',
+        sendAt: '1:20 am'
+    },
+    {
+        id: '10',
+        userImg: require('../assets/profileImg/user-10.jpg'),
+        userName: 'Hammy',
+        recentMessage: 'Meow meow.',
+        sendAt: '1:20 am'
+    },
+    {
+        id: '11',
+        userImg: require('../assets/profileImg/user-11.jpg'),
+        userName: 'Hammy',
+        recentMessage: 'Meow meow.',
+        sendAt: '1:20 am'
+    },
+    {
+        id: '12',
+        userImg: require('../assets/profileImg/user-12.jpg'),
         userName: 'Hammy',
         recentMessage: 'Meow meow.',
         sendAt: '1:20 am'

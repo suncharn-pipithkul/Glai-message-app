@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Input, Button, SocialIcon } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
@@ -15,6 +15,8 @@ export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { onLogin, onGoogleSignin } = useContext(AuthContext);
+    const emailInput = useRef();
+    const passwordInput = useRef();
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -23,17 +25,23 @@ export default function LoginScreen({ navigation }) {
                     <Text style={[{flex:0.5}, globalStyles.headerText]}>Sign In</Text>
 
                     <Input
+                        ref={emailInput}
                         leftIcon={<Feather name="mail" size={24} color="black" />}
                         label='Email'
                         placeholder='Enter your Email'
+                        returnKeyType='next'
+                        onSubmitEditing={() => passwordInput.current.focus()}
+                        blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setEmail(text)}
                     />
 
                     <Input
+                        ref={passwordInput}
                         leftIcon={<Feather name="lock" size={24} color="black" />}
                         secureTextEntry
                         label='Password'
                         placeholder='Enter your password'
+                        onSubmitEditing={() => {if (email && password) onLogin(email, password)}}
                         onChangeText={ text => setPassword(text)}
                     />
 
