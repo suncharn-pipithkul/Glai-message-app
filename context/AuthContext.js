@@ -16,9 +16,11 @@ export const AuthProvider = ({ children }) => {
                 onLogin: async (email, password) => {
                     try {
                         await auth().signInWithEmailAndPassword(email, password);
+                        return true; // login succesfully
                     } catch(err){
                         alert(err);
                         console.log('@onLogin', err);
+                        return false; // login failed
                     }
                 },
                 onGoogleSignin: async () => {
