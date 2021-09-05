@@ -25,62 +25,88 @@ export default function LoginScreen({ navigation }) {
 
     const onSubmit = useCallback(async () => {
             if (email && password) {
-                const loginStatus = onLogin(email, password)
+                const loginStatus = await onLogin(email, password)
 
                 if (loginStatus && rememberMe) {
                     try {
-                        await AsyncStorage.setItem('@rememberMe', String(rememberMe));
-                        await AsyncStorage.setItem('@email', email);
-                        await AsyncStorage.setItem('@password', password);
+                        console.log('storing');
+                        await AsyncStorage.setItem('@rememberMe', JSON.stringify(rememberMe));
+                        await AsyncStorage.setItem('@email', JSON.stringify(email));
+                        await AsyncStorage.setItem('@password', JSON.stringify(password));
                     } catch(err) {
+                        alert(err);
                         console.log('Error @onSubmit: ', err);
                     }
                 }
             }
-        },
-        [email, password] // onSubmit rerender only if email or password input changed
-    );
 
-    const onCheckingRememberMe = async () => {
+            if (!rememberMe) {
+                clearStoredUser();
+            }
+        },
+        [rememberMe, email, password] // onSubmit rerender only if email/password or rememberMe input changed
+    );
+    
+    const getCheck = async () => {
         try {
             const value = await AsyncStorage.getItem('@rememberMe');
-
-            if (value !== null) {
-                return value === 'true';
-            }
-            return false;
+            return value === null ? null : value === 'true';
         } catch(err) {
-            console.log('Error @onCheckingRememberme: ', err);
+            alert(err);
+            console.log('Error @getCheck: ', err);
             return false;
         }
     };
 
-    const getRememberedUser = async () => {
+    const getStoredEmail = async () => {
         try {
-            const rememberedEmail = await AsyncStorage.getItem('@email');
-            const rememberedPassword = await AsyncStorage.getItem('@password');
-            return {email:rememberedEmail, password:rememberedPassword};
+            const value = await AsyncStorage.getItem('@email');
+            return value === null ? null : value;
         } catch(err) {
-            console.log('Error @getRememberedUser: ', err);
-            return{email:'', password:''};
+            alert(err);
+            console.log('Error @getStoredEmail: ', err);
+            return '';
         }
     };
+
+    const getStoredPassword = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@password');
+            return value === null ? null : value;
+        } catch(err) {
+            alert(err);
+            console.log('Error @getStoredPassword: ', err);
+            return '';
+        }
+    }
+
+    const clearStoredUser = async () => {
+        try {
+            await AsyncStorage.removeItem('@rememberMe');
+            await AsyncStorage.removeItem('@email');
+            await AsyncStorage.removeItem('@password');
+        } catch(err) {
+            alert(err);
+            console.log('Error @clearStoredUser: ', err);
+        }
+    }
 
     useEffect(() => {
-        const value = getRememberedUser();
-        setEmail(value.email);
-        setPassword(value.password);
-        console.log('email: ', email);
-        console.log('pass: ', password);
+        const asyncWrap = async () => {
+            const check = await getCheck();
+            if (check !== null) {
+                setRememberMe(check);
+            }
 
-        const check = onCheckingRememberMe();
-        setRememberMe(check);
-
-        if (rememberMe) {
-            console.log('yes!! remember me');
-        } else {
-            console.log('NO I forgot :(');
-        }
+            if (check) {
+                const storedEmail = await getStoredEmail();
+                const storedPassword = await getStoredPassword();
+                setEmail(JSON.parse(storedEmail));
+                setPassword(JSON.parse(storedPassword));
+            }
+        };
+        asyncWrap();
+        console.log(`check: ${rememberMe}`);
     }, []);
 
     return (
@@ -95,6 +121,7 @@ export default function LoginScreen({ navigation }) {
                         label='Email'
                         placeholder='Enter your Email'
                         returnKeyType='next'
+                        defaultValue={email}
                         onSubmitEditing={() => passwordInput.current.focus()}
                         blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setEmail(text)}
@@ -106,6 +133,7 @@ export default function LoginScreen({ navigation }) {
                         secureTextEntry
                         label='Password'
                         placeholder='Enter your password'
+                        defaultValue={password}
                         onSubmitEditing={() => onSubmit()}
                         onChangeText={ text => setPassword(text)}
                     />
