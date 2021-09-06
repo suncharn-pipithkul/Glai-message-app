@@ -3,6 +3,7 @@ import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'reac
 import { Input, Button, CheckBox, SocialIcon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
 // Authentication & Storage
@@ -26,19 +27,9 @@ export default function LoginScreen({ navigation }) {
     // on submit form
     const onSubmit = useCallback(async () => {
             if (email && password) {
-                const loginStatus = await onLogin(email, password)
-
-                if (loginStatus && rememberMe) {
-                    try {
-                        console.log('storing');
-                        await AsyncStorage.setItem('@rememberMe', JSON.stringify(rememberMe));
-                        await AsyncStorage.setItem('@email', JSON.stringify(email));
-                        await AsyncStorage.setItem('@password', JSON.stringify(password));
-                    } catch(err) {
-                        alert(err);
-                        console.log('Error @onSubmit: ', err);
-                    }
-                }
+                await onLogin(email, password)
+                if (rememberMe)
+                    saveUserData();
             }
 
             if (!rememberMe) {
@@ -47,7 +38,24 @@ export default function LoginScreen({ navigation }) {
         },
         [rememberMe, email, password] // onSubmit rerender only if email/password or rememberMe input changed
     );
-    
+
+    // store data on toggle on/ emailpassword changed/ login pressed
+    const saveUserData = async () => {
+        saveData('@rememberMe', rememberMe);
+        saveData('@email', email);
+        saveData('@password', password);
+    };
+
+    // save data in storage
+    const saveData = async (storageKey, data) => {
+        try {
+            await AsyncStorage.setItem(storageKey, JSON.stringify(data));
+        } catch(err) {
+            alert(err);
+            console.log('Error @saveData: ', err);
+        }
+    };
+
     // get stored bool value
     const getCheck = async () => {
         try {
@@ -115,6 +123,7 @@ export default function LoginScreen({ navigation }) {
                         placeholder='Enter your Email'
                         returnKeyType='next'
                         defaultValue={email}
+                        onEndEditing={() => {if (rememberMe) saveUserData()}}
                         onSubmitEditing={() => passwordInput.current.focus()}
                         blurOnSubmit={false}  // keep the keyboard up on submit
                         onChangeText={ text => setEmail(text)}
@@ -123,10 +132,12 @@ export default function LoginScreen({ navigation }) {
                     <Input
                         ref={passwordInput}
                         leftIcon={<Feather name="lock" size={24} color="black" />}
+                        // rightIcon={password ? <Ionicons name="ios-eye-off" size={24} color="darkgray" />: null}
                         secureTextEntry
                         label='Password'
                         placeholder='Enter your password'
                         defaultValue={password}
+                        onEndEditing={() => {if (rememberMe) saveUserData()}}
                         onSubmitEditing={() => onSubmit()}
                         onChangeText={ text => setPassword(text)}
                     />
@@ -143,7 +154,10 @@ export default function LoginScreen({ navigation }) {
                         checked={rememberMe}
                         onIconPress={() => {
                             setRememberMe(prev => !prev);
-                            clearStoredUser();
+                            if (rememberMe)
+                                saveUserData();
+                            else
+                                clearStoredUser();
                         }}
                     />
 
