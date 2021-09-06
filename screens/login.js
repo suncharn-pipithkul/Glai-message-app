@@ -20,6 +20,7 @@ export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState('');
+    const [isHidePassword, setIsHidePassword] = useState(true);
     const { onLogin, onGoogleSignin } = useContext(AuthContext);
     const emailInput = useRef();
     const passwordInput = useRef();
@@ -132,8 +133,10 @@ export default function LoginScreen({ navigation }) {
                     <Input
                         ref={passwordInput}
                         leftIcon={<Feather name="lock" size={24} color="black" />}
-                        // rightIcon={password ? <Ionicons name="ios-eye-off" size={24} color="darkgray" />: null}
-                        secureTextEntry
+                        rightIcon={<TouchableOpacity onPress={() => setIsHidePassword(prev => !prev)}>
+                                        <Ionicons name={isHidePassword ? "ios-eye-off" : "ios-eye"} size={24} color="darkgray" />
+                                    </TouchableOpacity>}
+                        secureTextEntry={isHidePassword}
                         label='Password'
                         placeholder='Enter your password'
                         defaultValue={password}
