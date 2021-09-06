@@ -85,12 +85,14 @@ export default function MainNavigation() {
   const AppStack = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown:false}}>
+      {/* <Stack.Navigator> */}
           <Stack.Screen name='Main' component={MainScreen} 
           //   options={{
           //     title:'Chats',
-          //     // headerTintColor: '#fff',
+          //     headerTintColor: '#fff',
           //     headerStyle: {
-          //       // backgroundColor: '#046abd',
+          //       height: 30,
+          //       backgroundColor: '#046abd',
           //       shadowOpacity: 0, // This is for ios
           //       elevation: 0, // This is for android
           //       shadowColor: 'transparent',

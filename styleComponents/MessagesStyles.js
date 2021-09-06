@@ -80,7 +80,7 @@ export const MessageText = styled.Text`
 `;
 
 export const SearchBarContainer = styled.TouchableOpacity`
-    flex: 1;
+    /* flex: 1; */
     flex-direction: row;
 
     min-height: 40px;

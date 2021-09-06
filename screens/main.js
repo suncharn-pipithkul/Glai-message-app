@@ -34,16 +34,16 @@ export default function MainScreen({ navigation }) {
         setRefeshing(false);
     }, [refreshing])
 
-    console.log(useHeaderHeight());
 
     return (
         <Container>
-            <SearchBar/>
+            {/* <SearchBar/> */}
             <FlatList
                 keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
-                // ListHeaderComponent={() => <SearchBar/>}
+                ListHeaderComponent={() => <SearchBar/>}
+                // ListHeaderComponent={() => <TextInput placeholder='test'/>}
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
