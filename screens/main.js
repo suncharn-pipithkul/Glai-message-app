@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput } from 'react-native';
-import { Button } from 'react-native-elements';
+import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image } from 'react-native';
+import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
     , UserImgWrapper, UserInfo, UserName, MessageText
@@ -35,15 +35,27 @@ export default function MainScreen({ navigation }) {
     }, [refreshing])
 
 
+    const UserAvatar = () => {
+        return (
+            <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:8,}} onPress={() => console.log('i did it')}>
+                <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
+            </TouchableHighlight>
+        );
+    }
+
     return (
         <Container>
-            {/* <SearchBar/> */}
+            <Header
+                placement='left'
+                leftComponent={UserAvatar()}
+                centerComponent={{text:'Chats', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
+                centerContainerStyle={{alignSelf:'center'}}
+            />
             <FlatList
                 keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
                 ListHeaderComponent={() => <SearchBar/>}
-                // ListHeaderComponent={() => <TextInput placeholder='test'/>}
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
@@ -87,6 +99,13 @@ const styles = StyleSheet.create({});
 
 const example = [
     {
+        id: '3',
+        userImg: require('../assets/profileImg/user-2.jpg'),
+        userName: 'Boo',
+        recentMessage: 'Takes an item from data and renders it into the list.',
+        sendAt: '7:20 am'
+    },
+    {
         id: '1',
         userImg: require('../assets/profileImg/user-0.jpg'),
         userName: 'Bill',
@@ -99,13 +118,6 @@ const example = [
         userName: 'Thomas',
         recentMessage: 'By default, the list looks for a key prop on each item and uses that for the React key. Alternatively, you can provide a custom keyExtractor prop.',
         sendAt: '12:25 pm'
-    },
-    {
-        id: '3',
-        userImg: require('../assets/profileImg/user-2.jpg'),
-        userName: 'Boo',
-        recentMessage: 'Takes an item from data and renders it into the list.',
-        sendAt: '7:20 am'
     },
     {
         id: '4',
