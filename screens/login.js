@@ -146,7 +146,7 @@ export default function LoginScreen({ navigation }) {
                     />
                     <View style={{width:'100%', flexDirection:'row', justifyContent:'flex-end'}}>
                         <TouchableOpacity onPress={() => console.log('forgot password?')}>
-                            <Text style={{fontWeight:'bold', color:'#046abd'}}>Forgot password?</Text>
+                            <Text style={{fontWeight:'bold', color:'#2089dc'}}>Forgot password?</Text>
                         </TouchableOpacity>
                     </View>
 

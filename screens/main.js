@@ -50,6 +50,10 @@ export default function MainScreen({ navigation }) {
                 leftComponent={UserAvatar()}
                 centerComponent={{text:'Chats', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
                 centerContainerStyle={{alignSelf:'center'}}
+                containerStyle={{
+                    borderBottomWidth:0, 
+                    shadowOpacity: 0, // This is for ios
+                }}
             />
             <FlatList
                 keyboardShouldPersistTaps='handled'

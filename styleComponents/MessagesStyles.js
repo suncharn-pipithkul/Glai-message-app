@@ -4,6 +4,7 @@ import styled from 'styled-components';
 export const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
+  /* background-color: #2089dc; */
   /* background-color: black; */
   /* border-radius: 15px; */
 `;
