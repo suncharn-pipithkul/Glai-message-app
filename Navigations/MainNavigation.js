@@ -25,13 +25,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
 
-
 // screens
 import OnBoardScreen from '../screens/onBoard';
 import LoginScreen from '../screens/login';
 import RegisterScreen from '../screens/register';
 import MainScreen from '../screens/main';
 import ChatScreen from '../screens/chat';
+import ProfileScreen from '../screens/profile';
 
 
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
@@ -108,6 +108,7 @@ export default function MainNavigation() {
             name='Chat' 
             component={ChatScreen}
             options={({ route }) => ({title:route.params.userName})}/>
+          <Stack.Screen name='Profile' component={ProfileScreen}/>
       </Stack.Navigator>
     );
   };
@@ -121,7 +122,7 @@ export default function MainNavigation() {
   // Check if user viewed onboarding before or not
   useEffect(() => {
     checkOnboarding();
-  }, []);
+  });
 
   // Config Google Sign in
   useEffect(() => {

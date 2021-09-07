@@ -37,7 +37,7 @@ export default function MainScreen({ navigation }) {
 
     const UserAvatar = () => {
         return (
-            <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:8,}} onPress={() => console.log('i did it')}>
+            <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
                 <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
             </TouchableHighlight>
         );
@@ -86,13 +86,13 @@ export default function MainScreen({ navigation }) {
                 )}
             />
 
-            <Button 
+            {/* <Button 
                 title='SIGN OUT'
                 containerStyle={globalStyles.button} 
                 buttonStyle={globalStyles.button}
                 raised
                 onPress={() => onSignout()}
-            />
+            /> */}
         </Container>
     );
 }
