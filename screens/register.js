@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
+import { AvatarPicker } from '../components/AvatarPicker';
 
 
 export default function RegisterScreen({ navigation }) {
@@ -21,12 +22,17 @@ export default function RegisterScreen({ navigation }) {
     const passwordInput = useRef();
     const confirmPasswordInput = useRef();
 
-
+    
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={globalStyles.background}>
                 <View style={globalStyles.container}>
                     <Text style={[{flex:0.5}, globalStyles.headerText]}>Register</Text>
+
+                    <AvatarPicker
+                        dimension={150}
+                        source={require('../assets/profileImg/blank-profile-picture.png')}
+                    />
 
                     <Input 
                         ref={userNameInput}
