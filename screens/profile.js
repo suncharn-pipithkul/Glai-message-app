@@ -23,6 +23,8 @@ export default function ProfileScreen() {
     return (
         <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
             <UserAvatar/>
+            <Text>{user.displayName}</Text>
+            <Text>{user.email}</Text>
             <Text>Profile Screen1</Text>
             <Text>Profile Screen2</Text>
             <Text>Profile Screen3</Text>

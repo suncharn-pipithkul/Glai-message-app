@@ -37,8 +37,8 @@ export default function MainScreen({ navigation }) {
 
     const UserAvatar = () => {
         return (
-            <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
-                <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
+            <TouchableHighlight style={{height:40, width:40, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
+                <Image style={{height:40, width:40, borderRadius:30}} source={require('../assets/profileImg/user-9.jpg')}/>
             </TouchableHighlight>
         );
     }
