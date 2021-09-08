@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import  { Image, StyleSheet, TouchableOpacity } from 'react-native';
-import ImageCropPicker,  { ImageOrVideo } from 'react-native-image-crop-picker';
+import  { View, Image, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export const AvatarPicker = (props) => {
     // If the programmer provided source prop then used its uri (default avatar image).
-    const [uri, setUri] = useState(props.source?.uri || undefined);
+    const [uri, setUri] = useState(props.defaultSource?.uri || undefined);
 
     const pickImage = async () => {
         try {
@@ -27,16 +28,34 @@ export const AvatarPicker = (props) => {
 
     return (
         <TouchableOpacity onPress={pickImage}>
-            <Image
-                style={{
-                    width: props.dimension,
-                    height: props.dimension,
-                    borderRadius: props.dimension / 2 >> 0, // integer division
-                }}
+            <ImageBackground
+                // style={[
+                //     props.style, 
+                // {
+                //     width: props.dimension,
+                //     height: props.dimension,
+                //     borderRadius: props.dimension / 2 >> 0, // integer division
+                // }]}
+                imageStyle={{borderRadius: props.dimension / 2 >> 0,}}
                 {...props}
                 // if new img is set change to that img. Otherwise, default img
-                source={uri ? {uri} : props.source}
-            />
+                source={uri ? {uri} : props.defaultSource}
+            >
+                <View style={styles.iconContainer}>
+                    <AntDesign name='pluscircle' size={30} color='dimgray' style={styles.icon}/>
+                </View>
+            </ImageBackground>
         </TouchableOpacity>
     );
 };
+
+const styles = StyleSheet.create({
+    iconContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+    },
+    icon: {
+        opacity: 0.7,
+    },
+});
