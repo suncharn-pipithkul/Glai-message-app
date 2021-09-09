@@ -8,6 +8,7 @@ import
   TouchableHighlight,
   ActivityIndicator} from 'react-native';
 import { Avatar } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
@@ -87,7 +88,42 @@ export default function MainNavigation() {
 
   const MainTab = () => {
     return (
-      <Tab.Navigator screenOptions={{headerShown:false}}>
+      <Tab.Navigator 
+        screenOptions={ ({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Chats') {
+              // iconName = focused ? 'chatbubble-sharp' : 'chatbubble-outline';
+              // iconName = focused ? 'ios-chatbubble-sharp' : 'ios-chatbubble-outline';
+              iconName = focused ? 'md-chatbubble-sharp' : 'md-chatbubble-outline';
+              // iconName = 'md-chatbubble-sharp';
+
+
+            } else if (route.name === 'Friends') {
+              // iconName = focused ? 'ios-people-sharp' : 'ios-people-outline';
+              // iconName = focused ? 'people-sharp' : 'people-outline';
+              iconName = focused ? 'md-people-sharp' : 'md-people-outline';
+              // iconName = 'md-people-sharp'
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />
+          },
+          // tabBarActiveTintColor: '#2089dc',
+          // tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: 'white',
+          tabBarInactiveTintColor: 'white',
+          tabBarLabelPosition: 'beside-icon',
+          tabBarStyle: {
+            borderTopWidth:0, 
+            shadowOpacity: 0, // This is for ios
+            backgroundColor: '#2089dc',
+          },
+
+          headerShown: false,
+        })}
+        
+      >
         <Tab.Screen name='Chats' component={MainScreen} />
         <Tab.Screen name='Friends' component={FriendsScreen} />
       </Tab.Navigator>
