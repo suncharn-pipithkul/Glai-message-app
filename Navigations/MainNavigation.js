@@ -24,6 +24,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // screens
 import OnBoardScreen from '../screens/onBoard';
@@ -32,10 +33,12 @@ import RegisterScreen from '../screens/register';
 import MainScreen from '../screens/main';
 import ChatScreen from '../screens/chat';
 import ProfileScreen from '../screens/profile';
+import FriendsScreen from '../screens/friends';
 
 
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const LoadingScreen = () => {
   return (
@@ -82,28 +85,19 @@ export default function MainNavigation() {
     );
   };
 
+  const MainTab = () => {
+    return (
+      <Tab.Navigator screenOptions={{headerShown:false}}>
+        <Tab.Screen name='Chats' component={MainScreen} />
+        <Tab.Screen name='Friends' component={FriendsScreen} />
+      </Tab.Navigator>
+    );
+  };
+
   const AppStack = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown:false}}>
-      {/* <Stack.Navigator> */}
-          <Stack.Screen name='Main' component={MainScreen} 
-          //   options={{
-          //     title:'Chats',
-          //     headerTintColor: '#fff',
-          //     headerStyle: {
-          //       height: 30,
-          //       backgroundColor: '#046abd',
-          //       shadowOpacity: 0, // This is for ios
-          //       elevation: 0, // This is for android
-          //       shadowColor: 'transparent',
-          //     },
-          //     headerLeft: () => (
-          //       <TouchableHighlight style={{height:40, width:40, borderRadius:25, marginLeft:15,}} onPress={() => console.log('i did it')}>
-          //         <Image style={{height:40, width:40, borderRadius:25}} source={require('../assets/profileImg/user-9.jpg')}/>
-          //       </TouchableHighlight>
-          //     ),
-          // }}
-          />
+          <Stack.Screen name='Main' component={MainTab} />
           <Stack.Screen 
             name='Chat' 
             component={ChatScreen}
