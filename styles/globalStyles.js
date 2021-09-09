@@ -7,7 +7,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     container: {
-        // backgroundColor: 'dodgerblue',
+        // backgroundColor: 'yellowgreen',
         margin: 32,
         flex: 1,
         alignItems: 'center',

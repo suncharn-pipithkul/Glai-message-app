@@ -18,21 +18,34 @@ import { AvatarPicker } from '../components/AvatarPicker';
 
 
 export default function RegisterScreen({ navigation }) {
+    // States
+    const [profileImg, setProfileImg] = useState(null);
     const [userName, setUserName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    // Contexts
     const { onRegister } = useContext(AuthContext);
+
+    // References
     const userNameInput = useRef();
     const emailInput = useRef();
     const passwordInput = useRef();
     const confirmPasswordInput = useRef();
 
+    const onAvatarChange = (image) => {
+        // console.log('image= ', image);
+        // console.log('');
+        // console.log('imgPath= ', image.path);
+        setProfileImg(image);
+        // upload image to server
+    };
 
     return (
-        <ScrollView style={globalStyles.background}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <ScrollView >
+                {/* <View style={{backgroundColor:'bisque'}}> */}
                     <View style={globalStyles.container}>
                         <Text style={[{flex:0.5}, globalStyles.headerText]}>Register</Text>
 
@@ -44,6 +57,7 @@ export default function RegisterScreen({ navigation }) {
                                 borderRadius: 60,
                             }}
                             dimension={120}
+                            onChange={onAvatarChange}
                             defaultSource={require('../assets/profileImg/blank-profile-picture.png')}
                         />
 
@@ -84,7 +98,7 @@ export default function RegisterScreen({ navigation }) {
                             label='Confirm Password' 
                             secureTextEntry 
                             placeholder='Confirm password'
-                            onSubmitEditing={() => {if (userName && email && password) onRegister(userName, email, password)}}
+                            onSubmitEditing={() => {if (userName && email && password) onRegister(profileImg.path, userName, email, password)}}
                             onChangeText={ text => setConfirmPassword(text)}
                         />
                         <Button 
@@ -96,7 +110,7 @@ export default function RegisterScreen({ navigation }) {
                                 if (userName && email && password) onRegister(userName, email, password);
                             }}
                         />
-                        <View style={{flex:1, justifyContent:'flex-end'}}>
+                        <View style={{flex:1, justifyContent:'flex-end', marginTop:20,}}>
                             <View style={{flexDirection:'row'}}>
                                 <Text>Have an Account?</Text>
                                 <TouchableOpacity>
@@ -105,9 +119,9 @@ export default function RegisterScreen({ navigation }) {
                             </View>
                         </View>
                     </View>
-                </View>
-            </TouchableWithoutFeedback>
+                {/* </View> */}
         </ScrollView>
+        </TouchableWithoutFeedback>
     );
 }
 

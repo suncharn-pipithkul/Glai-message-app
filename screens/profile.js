@@ -15,7 +15,7 @@ export default function ProfileScreen() {
     const UserAvatar = () => {
         return (
             // <TouchableHighlight style={{height:100, width:100, borderRadius:50, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
-                <Image style={{height:100, width:100, borderRadius:50}} source={require('../assets/profileImg/user-9.jpg')}/>
+                <Image style={{height:100, width:100, borderRadius:50}} source={require('../assets/profileImg/blank-profile-picture.png')}/>
             // </TouchableHighlight>
         );
     }

@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import storage from '@react-native-firebase/storage';
 
 
 export const AuthContext = createContext();
@@ -38,10 +39,17 @@ export const AuthProvider = ({ children }) => {
                         console.log('@onLogin', err);
                     }
                 },
-                onRegister: async (userName, email, password) => {
+                onRegister: async (profileImgPath, userName, email, password) => {
                     try {
                         const credential = await auth().createUserWithEmailAndPassword(email, password);
-                        await credential.user.updateProfile({displayName:userName});
+
+                        // upload user profile Img
+                        const ref = storage().ref(`users/${credential.user.uid}/profile.jpg`); // create storage ref
+                        await ref.putFile(profileImgPath); // upload file to firebase storage
+
+                        // Update user displayName & profileImg
+                        const url = await storage().ref(`users/${credential.user.uid}/profile.jpg`).getDownloadURL(); // get image url from storage
+                        await credential.user.updateProfile({displayName:userName, photoURL:url}); // updated user profile info
                     } catch(err) {
                         alert(err);
                         console.log('@onRegister', err);
