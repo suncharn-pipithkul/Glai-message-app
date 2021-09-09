@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 
@@ -12,10 +12,14 @@ import { AuthContext } from '../context/AuthContext';
 export default function ProfileScreen() {
     const { user, onSignout } = useContext(AuthContext);
 
+    const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
+
     const UserAvatar = () => {
         return (
             // <TouchableHighlight style={{height:100, width:100, borderRadius:50, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
-                <Image style={{height:100, width:100, borderRadius:50}} source={require('../assets/profileImg/blank-profile-picture.png')}/>
+                <Image style={{height:100, width:100, borderRadius:50}} source={profileImgUrl ? 
+                    {uri:profileImgUrl} 
+                    : require('../assets/profileImg/blank-profile-picture.png')}/>
             // </TouchableHighlight>
         );
     }

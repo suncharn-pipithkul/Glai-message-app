@@ -31,8 +31,6 @@ export default function MainScreen({ navigation }) {
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
-    console.log('profileImgUrl: ' + profileImgUrl);
-
 
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
