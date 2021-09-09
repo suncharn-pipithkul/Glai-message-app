@@ -26,8 +26,13 @@ const textDisplayFormat = (text) => {
 
 export default function MainScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
+
+    // states
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
+    console.log('profileImgUrl: ' + profileImgUrl);
+
 
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
@@ -37,8 +42,8 @@ export default function MainScreen({ navigation }) {
 
     const UserAvatar = () => {
         return (
-            <TouchableHighlight style={{height:40, width:40, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
-                <Image style={{height:40, width:40, borderRadius:30}} source={require('../assets/profileImg/blank-profile-picture.png')}/>
+            <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
+                <Image style={{height:50, width:50, borderRadius:30}} source={profileImgUrl ? {uri:profileImgUrl} : require('../assets/profileImg/blank-profile-picture.png')}/>
             </TouchableHighlight>
         );
     }
