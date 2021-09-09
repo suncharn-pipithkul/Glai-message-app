@@ -43,13 +43,17 @@ export const AuthProvider = ({ children }) => {
                     try {
                         const credential = await auth().createUserWithEmailAndPassword(email, password);
 
-                        // upload user profile Img
-                        const ref = storage().ref(`users/${credential.user.uid}/profile.jpg`); // create storage ref
-                        await ref.putFile(profileImgPath); // upload file to firebase storage
+                        if (profileImgPath) {
+                            // upload user profile Img
+                            const ref = storage().ref(`users/${credential.user.uid}/profile.jpg`); // create storage ref
+                            await ref.putFile(profileImgPath); // upload file to firebase storage
 
-                        // Update user displayName & profileImg
-                        const url = await storage().ref(`users/${credential.user.uid}/profile.jpg`).getDownloadURL(); // get image url from storage
-                        await credential.user.updateProfile({displayName:userName, photoURL:url}); // updated user profile info
+                            // Update user displayName & profileImg
+                            const url = await storage().ref(`users/${credential.user.uid}/profile.jpg`).getDownloadURL(); // get image url from storage
+                            await credential.user.updateProfile({displayName:userName, photoURL:url}); // updated user profile info
+                        } else {
+                            await credential.user.updateProfile({displayName:userName}); // updated user profile info
+                        }
                     } catch(err) {
                         alert(err);
                         console.log('@onRegister', err);

@@ -35,11 +35,7 @@ export default function RegisterScreen({ navigation }) {
     const confirmPasswordInput = useRef();
 
     const onAvatarChange = (image) => {
-        // console.log('image= ', image);
-        // console.log('');
-        // console.log('imgPath= ', image.path);
         setProfileImg(image);
-        // upload image to server
     };
 
     return (
@@ -98,7 +94,7 @@ export default function RegisterScreen({ navigation }) {
                             label='Confirm Password' 
                             secureTextEntry 
                             placeholder='Confirm password'
-                            onSubmitEditing={() => {if (userName && email && password) onRegister(profileImg.path, userName, email, password)}}
+                            onSubmitEditing={() => {if (userName && email && password) onRegister(profileImg?.path, userName, email, password)}}
                             onChangeText={ text => setConfirmPassword(text)}
                         />
                         <Button 
@@ -107,7 +103,7 @@ export default function RegisterScreen({ navigation }) {
                             buttonStyle={globalStyles.button}
                             raised
                             onPress={() => {
-                                if (userName && email && password) onRegister(userName, email, password);
+                                if (userName && email && password) onRegister(profileImg?.path, userName, email, password);
                             }}
                         />
                         <View style={{flex:1, justifyContent:'flex-end', marginTop:20,}}>
