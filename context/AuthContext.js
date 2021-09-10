@@ -2,6 +2,7 @@ import React, { createContext, useState } from 'react';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 
 export const AuthContext = createContext();
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 onRegister: async (profileImgPath, userName, email, password) => {
                     try {
+                        let url = null;
                         const credential = await auth().createUserWithEmailAndPassword(email, password);
 
                         if (profileImgPath) {
@@ -49,11 +51,27 @@ export const AuthProvider = ({ children }) => {
                             await ref.putFile(profileImgPath); // upload file to firebase storage
 
                             // Update user displayName & profileImg
-                            const url = await storage().ref(`users/${credential.user.uid}/profile.jpg`).getDownloadURL(); // get image url from storage
-                            await credential.user.updateProfile({displayName:userName, photoURL:url}); // updated user profile info
-                        } else {
-                            await credential.user.updateProfile({displayName:userName}); // updated user profile info
+                            url = await storage().ref(`users/${credential.user.uid}/profile.jpg`).getDownloadURL(); // get image url from storage
                         }
+
+                        // updated user profile info
+                        await credential.user.updateProfile({displayName:userName, photoURL:url});
+                        
+                        // update local user
+                        setUser(auth().currentUser); 
+
+                        // update firestore Users collection
+                        const usersCollection = firestore().collection('Users');
+                        const userDoc = usersCollection.doc(credential.user.uid); // doc id is the user id
+                        await userDoc.set({
+                            uid: credential.user.uid,
+                            displayName: userName,
+                            email: email,
+                            photoURL: url,
+                            room: [],
+                            friends: [],
+                        });
+
                     } catch(err) {
                         alert(err);
                         console.log('@onRegister', err);

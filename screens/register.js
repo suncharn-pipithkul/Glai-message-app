@@ -35,6 +35,7 @@ export default function RegisterScreen({ navigation }) {
     const confirmPasswordInput = useRef();
 
     const onAvatarChange = (image) => {
+        console.log('@onAvatarChange: ', image.path);
         setProfileImg(image);
     };
 
