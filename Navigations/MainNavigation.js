@@ -26,6 +26,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // screens
 import OnBoardScreen from '../screens/onBoard';
@@ -40,6 +41,7 @@ import FriendsScreen from '../screens/friends';
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+// const Tab = createMaterialTopTabNavigator();
 
 const LoadingScreen = () => {
   return (
@@ -119,7 +121,7 @@ export default function MainNavigation() {
             shadowOpacity: 0, // This is for ios
             backgroundColor: '#2089dc',
           },
-
+          tabBarPosition: true,
           headerShown: false,
         })}
         
