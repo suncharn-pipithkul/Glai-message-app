@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import 
 { StyleSheet, 
   Text, 
@@ -36,6 +36,7 @@ import MainScreen from '../screens/main';
 import ChatScreen from '../screens/chat';
 import ProfileScreen from '../screens/profile';
 import FriendsScreen from '../screens/friends';
+import AddFriendsScreen from '../screens/addFriend';
 
 
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
@@ -54,6 +55,8 @@ const LoadingScreen = () => {
 export default function MainNavigation() {
   const [viewedOnboarding, setViewedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [bottomTabColor, setBottomTabColor] = useState('#2089dc');
+
   const {user, setUser} = useContext(AuthContext);
 
   // function to check if user has seen the onboarding screen or not
@@ -88,6 +91,15 @@ export default function MainNavigation() {
     );
   };
 
+  const FriendStack = () => {
+    return (
+      <Stack.Navigator screenOptions={{headerShown:false}}>
+          <Stack.Screen name='Friends' component={FriendsScreen} />
+          <Stack.Screen name='Add Friend' component={AddFriendsScreen} />
+      </Stack.Navigator>
+    );
+  };
+
   const MainTab = () => {
     return (
       <Tab.Navigator 
@@ -96,17 +108,9 @@ export default function MainNavigation() {
             let iconName;
 
             if (route.name === 'Chats') {
-              // iconName = focused ? 'chatbubble-sharp' : 'chatbubble-outline';
-              // iconName = focused ? 'ios-chatbubble-sharp' : 'ios-chatbubble-outline';
               iconName = focused ? 'md-chatbubble-sharp' : 'md-chatbubble-outline';
-              // iconName = 'md-chatbubble-sharp';
-
-
-            } else if (route.name === 'Friends') {
-              // iconName = focused ? 'ios-people-sharp' : 'ios-people-outline';
-              // iconName = focused ? 'people-sharp' : 'people-outline';
+            } else if (route.name === 'FriendsStack') {
               iconName = focused ? 'md-people-sharp' : 'md-people-outline';
-              // iconName = 'md-people-sharp'
             }
 
             return <Ionicons name={iconName} size={size} color={color} />
@@ -119,7 +123,7 @@ export default function MainNavigation() {
           tabBarStyle: {
             borderTopWidth:0, 
             shadowOpacity: 0, // This is for ios
-            backgroundColor: '#2089dc',
+            backgroundColor: bottomTabColor,
           },
           tabBarPosition: true,
           headerShown: false,
@@ -127,7 +131,10 @@ export default function MainNavigation() {
         
       >
         <Tab.Screen name='Chats' component={MainScreen} />
-        <Tab.Screen name='Friends' component={FriendsScreen} />
+        <Tab.Screen 
+          name='FriendsStack' 
+          options={{tabBarLabel:'Friends'}} 
+          component={FriendStack} />
       </Tab.Navigator>
     );
   };

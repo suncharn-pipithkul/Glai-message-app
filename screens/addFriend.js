@@ -1,31 +1,19 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image } from 'react-native';
-import { Button, Header } from 'react-native-elements';
+import { View, Text, Image, FlatList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
+import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
+// import { Container } from '../styleComponents/MessagesStyles';
 import { Container, Card, UserImg
     , UserImgWrapper, UserInfo, UserName, MessageText
     , SendAtText, MainTextWrapper, TopTextWrapper
     , BottomTextWrapper } 
 from '../styleComponents/MessagesStyles';
 
-import { useHeaderHeight } from '@react-navigation/elements';
-
 // Context
 import { AuthContext } from '../context/AuthContext';
 
-// styles
-import { globalStyles } from '../styles/globalStyles';
-
-// a function that cut off the text longer than MAX_LENGTH and put ...
-const textDisplayFormat = (text) => {
-    const MAX_LENGTH = 30;
-    if (text.trim().length < MAX_LENGTH)
-        return text.trim()
-    return `${text.trim().substr(0, MAX_LENGTH)}...`
-};
-
-export default function MainScreen({ navigation }) {
-    const { user } = useContext(AuthContext);
+export default function AddFriendsScreen({ navigation }) {
+    const { user, onSignout } = useContext(AuthContext);
 
     // states
     const [refreshing, setRefeshing] = useState(false);
@@ -39,13 +27,9 @@ export default function MainScreen({ navigation }) {
 
 
     const UserAvatar = () => {
-        console.log(user);
-
         return (
             <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
-                <Image 
-                    style={{height:50, width:50, borderRadius:30}} 
-                    source={profileImgUrl ? {uri:profileImgUrl} : require('../assets/profileImg/blank-profile-picture.png')}/>
+                <Image style={{height:50, width:50, borderRadius:30}} source={profileImgUrl ? {uri:profileImgUrl} : require('../assets/profileImg/blank-profile-picture.png')}/>
             </TouchableHighlight>
         );
     }
@@ -55,9 +39,11 @@ export default function MainScreen({ navigation }) {
             <Header
                 placement='left'
                 leftComponent={UserAvatar()}
-                centerComponent={{text:'Chats', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
+                centerComponent={{text:'Friends', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
                 centerContainerStyle={{alignSelf:'center'}}
+                rightContainerStyle={{alignSelf:'center'}}
                 containerStyle={{
+                    backgroundColor: '#EA830B',
                     borderBottomWidth:0, 
                     shadowOpacity: 0, // This is for ios
                 }}
@@ -81,12 +67,7 @@ export default function MainScreen({ navigation }) {
                             <MainTextWrapper>
                                 <TopTextWrapper>
                                     <UserName numberOfLines={1}>{item.userName}</UserName>
-                                    <SendAtText>{item.sendAt}</SendAtText>
                                 </TopTextWrapper>
-
-                                <BottomTextWrapper>
-                                    <MessageText numberOfLines={1}>{item.recentMessage}</MessageText>
-                                </BottomTextWrapper>
                             </MainTextWrapper>
                         </UserInfo>
                     </Card>
@@ -96,9 +77,17 @@ export default function MainScreen({ navigation }) {
     );
 }
 
-
-
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    addButton: {
+        height: 30,
+        width: 60,
+        borderRadius: 10,
+        marginRight: 8,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+});
 
 const example = [
     {
@@ -186,3 +175,5 @@ const example = [
         sendAt: '1:20 am'
     },
 ];
+
+example.sort((a, b) => (a.userName > b.userName) ? 1 : -1);

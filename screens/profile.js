@@ -29,6 +29,7 @@ export default function ProfileScreen() {
             <UserAvatar/>
             <Text>{user.displayName}</Text>
             <Text>{user.email}</Text>
+            <Text>{user.uid}</Text>
             <Text>Profile Screen1</Text>
             <Text>Profile Screen2</Text>
             <Text>Profile Screen3</Text>
