@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, createContext } from 'react';
 import 
 { StyleSheet, 
   Text, 
@@ -24,7 +24,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
@@ -37,6 +37,7 @@ import ChatScreen from '../screens/chat';
 import ProfileScreen from '../screens/profile';
 import FriendsScreen from '../screens/friends';
 import AddFriendsScreen from '../screens/addFriend';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
@@ -94,15 +95,18 @@ export default function MainNavigation() {
   const FriendStack = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name='Friends' component={FriendsScreen} />
-          <Stack.Screen name='Add Friend' component={AddFriendsScreen} />
+          <Stack.Screen name='Friends' component={FriendsScreen}/>
+          <Stack.Screen name='Add Friend' component={AddFriendsScreen} 
+            options={{
+              cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
+          }}/>
       </Stack.Navigator>
     );
   };
 
   const MainTab = () => {
     return (
-      <Tab.Navigator 
+      <Tab.Navigator
         screenOptions={ ({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -115,8 +119,6 @@ export default function MainNavigation() {
 
             return <Ionicons name={iconName} size={size} color={color} />
           },
-          // tabBarActiveTintColor: '#2089dc',
-          // tabBarInactiveTintColor: 'gray',
           tabBarActiveTintColor: 'white',
           tabBarInactiveTintColor: 'white',
           tabBarLabelPosition: 'beside-icon',
@@ -132,8 +134,8 @@ export default function MainNavigation() {
       >
         <Tab.Screen name='Chats' component={MainScreen} />
         <Tab.Screen 
-          name='FriendsStack' 
-          options={{tabBarLabel:'Friends'}} 
+          name='FriendsStack'
+          options={{tabBarLabel:'Friends'}}
           component={FriendStack} />
       </Tab.Navigator>
     );

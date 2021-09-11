@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image } from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image, StatusBar } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
@@ -39,8 +39,6 @@ export default function MainScreen({ navigation }) {
 
 
     const UserAvatar = () => {
-        console.log(user);
-
         return (
             <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
                 <Image 
@@ -53,6 +51,10 @@ export default function MainScreen({ navigation }) {
     return (
         <Container>
             <Header
+                statusBarProps={{
+                    animated: true,
+                    backgroundColor: '#2089DC'
+                }}
                 placement='left'
                 leftComponent={UserAvatar()}
                 centerComponent={{text:'Chats', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}

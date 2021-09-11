@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, Image, FlatList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
+import { StatusBar, View, Text, Image, FlatList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 // import { Container } from '../styleComponents/MessagesStyles';
@@ -54,6 +54,10 @@ export default function FriendsScreen({ navigation }) {
     return (
         <Container>
             <Header
+                statusBarProps={{
+                    animated: true,
+                    backgroundColor: '#2089DC'
+                }}
                 placement='left'
                 leftComponent={UserAvatar()}
                 centerComponent={{text:'Friends', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
