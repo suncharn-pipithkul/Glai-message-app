@@ -11,6 +11,7 @@ from '../styleComponents/MessagesStyles';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
+import { FriendStackContext } from '../context/FriendStackContext';
 
 export default function FriendsScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
@@ -19,6 +20,9 @@ export default function FriendsScreen({ navigation }) {
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
+
+    // context
+    const {setIsAddFriend} = useContext(FriendStackContext);
 
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
@@ -38,7 +42,10 @@ export default function FriendsScreen({ navigation }) {
         const [isPressed, setIsPressed] = useState(false);
 
         return (
-            <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => navigation.navigate('Add Friend')}>
+            <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => {
+                setIsAddFriend(true);
+                navigation.navigate('Add Friend');
+            }}>
                 <Text style={{fontSize:18, color:isPressed ? 'white':'#0073CE'}}>+ add</Text>
             </TouchableOpacity>
             // <TouchableHighlight 

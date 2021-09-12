@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext, createContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, createContext, createRef } from 'react';
 import 
 { StyleSheet, 
   Text, 
@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
+import { FriendStackContext } from '../context/FriendStackContext';
 
 // styles
 import { globalStyles } from '../styles/globalStyles';
@@ -59,6 +60,7 @@ export default function MainNavigation() {
   const [bottomTabColor, setBottomTabColor] = useState('#2089dc');
 
   const {user, setUser} = useContext(AuthContext);
+  const {isAddFriend} = useContext(FriendStackContext);
 
   // function to check if user has seen the onboarding screen or not
   const checkOnboarding = async () => {
@@ -92,22 +94,24 @@ export default function MainNavigation() {
     );
   };
 
-  const FriendStack = () => {
+  const FriendsStack = createStackNavigator();
+
+  const FriendStackScreen = () => {
     return (
-      <Stack.Navigator screenOptions={{headerShown:false}}>
-          <Stack.Screen name='Friends' component={FriendsScreen}/>
-          <Stack.Screen name='Add Friend' component={AddFriendsScreen} 
+      <FriendsStack.Navigator screenOptions={{headerShown:false}}>
+          <FriendsStack.Screen name='Friends' component={FriendsScreen} />
+          <FriendsStack.Screen name='Add Friend' component={AddFriendsScreen} 
             options={{
               cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
           }}/>
-      </Stack.Navigator>
+      </FriendsStack.Navigator>
     );
   };
 
   const MainTab = () => {
     return (
       <Tab.Navigator
-        screenOptions={ ({ route }) => ({
+        screenOptions={ ({ navigation, route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
@@ -132,11 +136,18 @@ export default function MainNavigation() {
         })}
         
       >
-        <Tab.Screen name='Chats' component={MainScreen} />
         <Tab.Screen 
-          name='FriendsStack'
-          options={{tabBarLabel:'Friends'}}
-          component={FriendStack} />
+          name='Chats' 
+          component={MainScreen} 
+          listeners={ ({ navigation }) => ({
+            tabPress: e => {
+                if (isAddFriend)
+                  navigation.popToTop();
+                
+                console.log('it happened!!');
+            },
+          })}/>
+        <Tab.Screen name='FriendsStack' options={{tabBarLabel:'Friends'}} component={FriendStackScreen} />
       </Tab.Navigator>
     );
   };

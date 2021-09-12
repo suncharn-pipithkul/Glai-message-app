@@ -3,6 +3,7 @@ import React from 'react';
 import { StatusBar, StyleSheet} from 'react-native';
 // Context
 import { AuthProvider } from './context/AuthContext';
+import { FriendStackContextProvider } from './context/FriendStackContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Navigation
@@ -13,8 +14,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
+        <FriendStackContextProvider>
         {/* <StatusBar barStyle = 'dark-content'/> */}
-        <MainNavigation/>
+          <MainNavigation/>
+        </FriendStackContextProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

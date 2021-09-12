@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { StatusBar, View, Text, Image, FlatList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
@@ -10,6 +10,7 @@ from '../styleComponents/MessagesStyles';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
+import { FriendStackContext } from '../context/FriendStackContext';
 
 export default function AddFriendsScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
@@ -19,6 +20,15 @@ export default function AddFriendsScreen({ navigation }) {
     const [searchText, setSearchText] = useState('');
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
+    // context
+    const {setIsAddFriend} = useContext(FriendStackContext);
+
+    useEffect(() => {
+        navigation.addListener('beforeRemove', (e) => {
+            setIsAddFriend(false);
+        });
+    }, [navigation]);
+
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
         setRefeshing(false);
@@ -26,7 +36,10 @@ export default function AddFriendsScreen({ navigation }) {
 
     const backArrow = () => {
         return (
-            <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.pop()}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => {
+                setIsAddFriend(false);
+                navigation.pop();
+            }}>
                 <Feather name='arrow-left' size={24} color='white'/>
             </TouchableOpacity>
         );
