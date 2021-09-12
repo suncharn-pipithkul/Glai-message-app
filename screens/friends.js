@@ -10,7 +10,9 @@ import { Container, Card, UserImg
     FriendText,
     CheckIcon,
     RightTagWrapper,
-    TextAlignWrapper} 
+    TextAlignWrapper,
+    SectionHeaderWrapper,
+    SectionHeader} 
 from '../styleComponents/MessagesStyles';
 
 // Context
@@ -76,7 +78,11 @@ export default function FriendsScreen({ navigation }) {
                 ]}
                 keyExtractor={item => item.id}
                 renderSectionHeader={({ section }) => (
-                    <Text>{section.title}</Text>
+                    <SectionHeaderWrapper>
+                        <SectionHeader>
+                            <Text></Text>
+                        </SectionHeader>
+                    </SectionHeaderWrapper>
                 )}
                 renderItem={({ item }) => (
                     <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>

@@ -133,3 +133,16 @@ export const SearchBarInput = styled.TextInput`
 
     /* background-color: red; */
 `;
+
+export const SectionHeaderWrapper = styled.View`
+    flex: 1;
+    justify-content: center;
+    padding: 0px 16px 0px 16px;
+`;
+
+export const SectionHeader = styled.View`
+    background-color: aliceblue;
+    /* background-color: blue; */
+
+    border-radius: 20px;
+`;
