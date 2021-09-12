@@ -69,6 +69,11 @@ export const SendAtText = styled.Text`
     color: #ababab;
 `;
 
+export const friendText = styled.Text`
+    font-size: 14px;
+    color: #525252;
+`;
+
 export const BottomTextWrapper = styled.View`
     /* background-color: antiquewhite; */
     /* border-radius: 5px; */

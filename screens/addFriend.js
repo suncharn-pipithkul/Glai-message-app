@@ -23,7 +23,7 @@ export default function AddFriendsScreen({ navigation }) {
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
         setRefeshing(false);
-    }, [refreshing])
+    }, [refreshing]);
 
 
     const UserAvatar = () => {
@@ -32,7 +32,7 @@ export default function AddFriendsScreen({ navigation }) {
                 <Image style={{height:50, width:50, borderRadius:30}} source={profileImgUrl ? {uri:profileImgUrl} : require('../assets/profileImg/blank-profile-picture.png')}/>
             </TouchableHighlight>
         );
-    }
+    };
 
     return (
         <Container>
