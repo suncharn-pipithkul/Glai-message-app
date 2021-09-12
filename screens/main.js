@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image } from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image, Alert } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
@@ -37,9 +37,8 @@ export default function MainScreen({ navigation }) {
         setRefeshing(false);
     }, [refreshing])
 
-
     const UserAvatar = () => {
-        console.log(user);
+        // console.log(user);
 
         return (
             <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
@@ -66,7 +65,7 @@ export default function MainScreen({ navigation }) {
                 keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
-                ListHeaderComponent={() => <SearchBar/>}
+                ListHeaderComponent={<SearchBar onChangeText={text => setSearchText(text)} onClear={() => setSearchText('')} />}
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
