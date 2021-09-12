@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, Image, FlatList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, Image, FlatList, SectionList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 // import { Container } from '../styleComponents/MessagesStyles';
@@ -67,7 +67,44 @@ export default function FriendsScreen({ navigation }) {
                     shadowOpacity: 0, // This is for ios
                 }}
             />
-            <FlatList
+            <SectionList
+                keyboardShouldPersistTaps='handled'
+                ListHeaderComponent={() => <SearchBar/>}
+                sections={[
+                    {title: 'Friends', data: example.filter(item => item.friend)},
+                    {title: '', data: example.filter(item => !item.friend)},
+                ]}
+                keyExtractor={item => item.id}
+                renderSectionHeader={({ section }) => (
+                    <Text>{section.title}</Text>
+                )}
+                renderItem={({ item }) => (
+                    <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
+                        <UserInfo>
+                            <UserImgWrapper>
+                                <UserImg source={item.userImg}/>
+                            </UserImgWrapper>
+
+                            <MainTextWrapper>
+                                <TextAlignWrapper>
+                                    <TopTextWrapper>
+                                        <UserName numberOfLines={1}>{item.userName}</UserName>
+                                        {
+                                            !item.friend ? null :
+                                                <RightTagWrapper>
+                                                    <FriendText>friend</FriendText>
+                                                    <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
+                                                </RightTagWrapper>
+                                        }
+                                        
+                                    </TopTextWrapper>
+                                </TextAlignWrapper>
+                            </MainTextWrapper>
+                        </UserInfo>
+                    </Card>
+                )}
+            />
+            {/* <FlatList
                 keyboardShouldPersistTaps='handled'
                 data={example}
                 keyExtractor={item => item.id}
@@ -101,7 +138,7 @@ export default function FriendsScreen({ navigation }) {
                         </UserInfo>
                     </Card>
                 )}
-            />
+            /> */}
         </Container>
     );
 }

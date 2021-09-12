@@ -86,14 +86,14 @@ export const RightTagWrapper = styled.View`
 
 export const FriendText = styled.Text`
     padding: 3px 0px;
-    margin-right: 14px;
+    margin-right: 12px;
     font-size: 14px;
     color: #525252;
     /* background-color: bisque; */
 `;
 
 export const CheckIcon = styled(Ionicons)`
-    margin-right: 2px;
+    margin-right: 4px;
     /* background-color: yellowgreen; */
 `;
 
