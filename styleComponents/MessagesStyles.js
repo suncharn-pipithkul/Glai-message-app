@@ -141,8 +141,8 @@ export const SectionHeaderWrapper = styled.View`
 `;
 
 export const SectionHeader = styled.View`
-    background-color: aliceblue;
-    /* background-color: blue; */
-
     border-radius: 20px;
+    opacity: 0.1;
+    border-bottom-color: #2089DC;
+    border-bottom-width: 12px;
 `;

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, Image, FlatList, SectionList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
+import { ActivityIndicator, View, Text, Image, FlatList, SectionList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 // import { Container } from '../styleComponents/MessagesStyles';
@@ -22,6 +22,7 @@ export default function FriendsScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
 
     // states
+    const [data, setData] = useState(example);
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
@@ -40,10 +41,25 @@ export default function FriendsScreen({ navigation }) {
         );
     }
 
-    const AddButton = () => {
+    const AddButton = ({ item }) => {
+        const [loading, setLoading] = useState(false);
+
         return (
-            <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => navigation.navigate('Add Friend')}>
-                <Text style={{fontSize:18, color:isPressed ? 'white':'#0073CE'}}>+ add</Text>
+            <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => {
+                    console.log('added: ' + item.userName + ' ' + item.friend);
+                    setLoading(true);
+
+                    // Update data
+                    let updatedList = data.map(i => {
+                        if (i.id === item.id)
+                            return {...i, friend: true};
+                        return i;
+                    })
+                    setData(updatedList);
+            
+                    setLoading(false);
+                }}>
+                {!loading ? <Text style={{fontSize:18, color:'white'}}>+ add</Text> : <ActivityIndicator color='white'/>}
             </TouchableOpacity>
             // <TouchableHighlight 
             //     onPressIn={() => setIsPressed(true)}
@@ -71,17 +87,18 @@ export default function FriendsScreen({ navigation }) {
             />
             <SectionList
                 keyboardShouldPersistTaps='handled'
+                showsVerticalScrollIndicator={false}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
                 ListHeaderComponent={() => <SearchBar/>}
                 sections={[
-                    {title: 'Friends', data: example.filter(item => item.friend)},
-                    {title: '', data: example.filter(item => !item.friend)},
+                    {title: 'Friends', data: data.filter(item => item.friend)},
+                    {title: '', data: data.filter(item => !item.friend)},
                 ]}
                 keyExtractor={item => item.id}
                 renderSectionHeader={({ section }) => (
                     <SectionHeaderWrapper>
-                        <SectionHeader>
-                            <Text></Text>
-                        </SectionHeader>
+                        <SectionHeader />
                     </SectionHeaderWrapper>
                 )}
                 renderItem={({ item }) => (
@@ -96,7 +113,7 @@ export default function FriendsScreen({ navigation }) {
                                     <TopTextWrapper>
                                         <UserName numberOfLines={1}>{item.userName}</UserName>
                                         {
-                                            !item.friend ? null :
+                                            !item.friend ? <AddButton item={item}/> :
                                                 <RightTagWrapper>
                                                     <FriendText>friend</FriendText>
                                                     <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
@@ -155,7 +172,7 @@ const styles = StyleSheet.create({
         width: 60,
         borderRadius: 10,
         marginRight: 8,
-        backgroundColor: 'white',
+        backgroundColor: '#EA830B',
         alignItems: 'center',
         justifyContent: 'center',
     }
