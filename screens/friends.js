@@ -32,6 +32,8 @@ export default function FriendsScreen({ navigation }) {
         setRefeshing(false);
     }, [refreshing])
 
+    console.log(data);
+
 
     const UserAvatar = () => {
         return (
@@ -46,10 +48,10 @@ export default function FriendsScreen({ navigation }) {
 
         return (
             <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => {
-                    console.log('added: ' + item.userName + ' ' + item.friend);
+                    // console.log('added: ' + item.userName + ' ' + item.friend);
                     setLoading(true);
 
-                    // Update data
+                    // Update data array
                     let updatedList = data.map(i => {
                         if (i.id === item.id)
                             return {...i, friend: true};
@@ -183,96 +185,72 @@ const example = [
         id: '3',
         userImg: require('../assets/profileImg/user-2.jpg'),
         userName: 'Boo',
-        recentMessage: 'Takes an item from data and renders it into the list.',
-        sendAt: '7:20 am',
         friend: true
     },
     {
         id: '1',
         userImg: require('../assets/profileImg/user-0.jpg'),
         userName: 'Bill',
-        recentMessage: 'Internal state is not preserved when content scrolls out of the render window. Make sure all your data is captured in the item data or external stores like Flux, Redux, or Relay.',
-        sendAt: '1:20 pm',
         friend: true
     },
     {
         id: '2',
         userImg: require('../assets/profileImg/user-1.jpg'),
         userName: 'Thomas',
-        recentMessage: 'By default, the list looks for a key prop on each item and uses that for the React key. Alternatively, you can provide a custom keyExtractor prop.',
-        sendAt: '12:25 pm',
         friend: false
     },
     {
         id: '4',
         userImg: require('../assets/profileImg/user-3.jpg'),
         userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
         friend: true
     },
     {
         id: '5',
         userImg: require('../assets/profileImg/user-4.jpg'),
         userName: 'Mad lad',
-        recentMessage: 'I̶̙̺̳̞̩̒͆͆̽ͅ ̵̫̮̠̂̀̾̅̉̓̾̐̀̈́͘n̶͋͛̈́̓͑̓̎͌̊̑ͅę̵̛̲̘͌́̇̈́͛̂̓̓͘͠ȇ̵̗̬̺̗̬͕̠̗̓̄̋ͅͅd̶̡͙̦̤͖͈̱̪̙̞̿͒ͅ ̴̭̠̟̞̫̟̺̓̌̓͌̂͂̽͊͘͠ç̵̥̳͇͙͍̑̀̊͑̐́̌͂͗͘͜͝͝a̸̡̡̠͍͙̭̟̣͇̦̬͉̠͛̓͐̿̽̏̌̂͌̿̚͜͠ţ̴͍̯̠̦͌̔̑̐̆s̷̢͕̪͉͑͒̀͌̓̎̅͝ͅ',
-        sendAt: '1:20 am',
         friend: false
     },
     {
         id: '6',
         userImg: require('../assets/profileImg/user-5.jpg'),
         userName: 'Internal state is not preserved when content scrolls out of the render window',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
         friend: false
     },
     {
         id: '7',
         userImg: require('../assets/profileImg/user-6.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy1',
         friend: true
     },
     {
         id: '8',
         userImg: require('../assets/profileImg/user-7.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy2',
         friend: false
     },
     {
         id: '9',
         userImg: require('../assets/profileImg/user-8.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy3',
         friend: false
     },
     {
         id: '10',
         userImg: require('../assets/profileImg/user-10.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy4',
         friend: false
     },
     {
         id: '11',
         userImg: require('../assets/profileImg/user-11.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy5',
         friend: true
     },
     {
         id: '12',
         userImg: require('../assets/profileImg/user-12.jpg'),
-        userName: 'Hammy',
-        recentMessage: 'Meow meow.',
-        sendAt: '1:20 am',
+        userName: 'Hammy6',
         friend: false
     },
 ];
