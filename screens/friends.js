@@ -7,7 +7,10 @@ import { Container, Card, UserImg
     , UserImgWrapper, UserInfo, UserName
     , SendAtText, MainTextWrapper, TopTextWrapper
     , BottomTextWrapper, 
-    friendText} 
+    FriendText,
+    CheckIcon,
+    RightTagWrapper,
+    TextAlignWrapper} 
 from '../styleComponents/MessagesStyles';
 
 // Context
@@ -81,13 +84,19 @@ export default function FriendsScreen({ navigation }) {
                             </UserImgWrapper>
 
                             <MainTextWrapper>
-                                <TopTextWrapper>
-                                    <UserName numberOfLines={1}>{item.userName}</UserName>
-                                    <friendText>Friend</friendText>
-                                    {/* {item.friend ? <friendText>friend</friendText> : null} */}
-
-                                    {/* {item.friend ? <friendText>friend</friendText> : null} */}
-                                </TopTextWrapper>
+                                <TextAlignWrapper>
+                                    <TopTextWrapper>
+                                        <UserName numberOfLines={1}>{item.userName}</UserName>
+                                        {
+                                            !item.friend ? null :
+                                                <RightTagWrapper>
+                                                    <FriendText>friend</FriendText>
+                                                    <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
+                                                </RightTagWrapper>
+                                        }
+                                        
+                                    </TopTextWrapper>
+                                </TextAlignWrapper>
                             </MainTextWrapper>
                         </UserInfo>
                     </Card>

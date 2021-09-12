@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 export const Container = styled.View`
@@ -50,6 +51,11 @@ export const MainTextWrapper = styled.View`
     border-radius: 10px;
 `;
 
+export const TextAlignWrapper = styled.View`
+    flex: 1;
+    justify-content: center;
+`;
+
 export const TopTextWrapper = styled.View`
     flex-direction: row;
     justify-content: space-between;
@@ -58,20 +64,37 @@ export const TopTextWrapper = styled.View`
 `;
 
 export const UserName = styled.Text`
-    width: 80%;
+    width: 70%;
     font-size: 18px;
     font-weight: bold;
     color: #444444;
+    /* background-color: burlywood; */
 `;
 
 export const SendAtText = styled.Text`
     font-size: 14px;
     color: #ababab;
+    /* background-color: blanchedalmond; */
 `;
 
-export const friendText = styled.Text`
+export const RightTagWrapper = styled.View`
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    /* background-color: red; */
+`;
+
+export const FriendText = styled.Text`
+    padding: 3px 0px;
+    margin-right: 14px;
     font-size: 14px;
     color: #525252;
+    /* background-color: bisque; */
+`;
+
+export const CheckIcon = styled(Ionicons)`
+    margin-right: 2px;
+    /* background-color: yellowgreen; */
 `;
 
 export const BottomTextWrapper = styled.View`
