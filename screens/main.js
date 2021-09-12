@@ -26,16 +26,27 @@ const textDisplayFormat = (text) => {
 
 export default function MainScreen({ navigation }) {
     const { user } = useContext(AuthContext);
+    const dataHolder = example;
 
     // states
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [data, setData] = useState(dataHolder);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
         setRefeshing(false);
     }, [refreshing])
+
+    const filterSearch = (text) => {
+        const newData = dataHolder.filter(item => {
+            const itemData = `${item.userName.toUpperCase()}`;
+            return itemData.indexOf(text.toUpperCase()) > -1;
+        });
+
+        setData(newData);
+    };
 
     const UserAvatar = () => {
         // console.log(user);
@@ -63,9 +74,16 @@ export default function MainScreen({ navigation }) {
             />
             <FlatList
                 keyboardShouldPersistTaps='handled'
-                data={example}
+                data={data}
                 keyExtractor={item => item.id}
-                ListHeaderComponent={<SearchBar onChangeText={text => setSearchText(text)} onClear={() => setSearchText('')} />}
+                ListHeaderComponent={
+                    <SearchBar 
+                        onChangeText={text => {
+                            filterSearch(text);
+                            setSearchText(text);
+                        }} 
+                        onClear={() => setSearchText('')} />
+                }
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
