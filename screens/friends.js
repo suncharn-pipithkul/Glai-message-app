@@ -20,11 +20,12 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function FriendsScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
+    const dataHolder = example;
 
     // states
-    const [data, setData] = useState(example);
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [data, setData] = useState(dataHolder);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
@@ -32,7 +33,14 @@ export default function FriendsScreen({ navigation }) {
         setRefeshing(false);
     }, [refreshing])
 
-    console.log(data);
+    const filterSearch = (text) => {
+        const newData = dataHolder.filter(item => {
+            const itemData = `${item.userName.toUpperCase()}`;
+            return itemData.indexOf(text.toUpperCase()) > -1;
+        });
+
+        setData(newData);
+    };
 
 
     const UserAvatar = () => {
@@ -92,7 +100,17 @@ export default function FriendsScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                ListHeaderComponent={() => <SearchBar/>}
+                ListHeaderComponent={
+                    <SearchBar
+                        onChangeText={text => {
+                            filterSearch(text);
+                            setSearchText(text);
+                        }} 
+                        onClear={() => {
+                            setData(dataHolder);
+                            setSearchText('');
+                        }} />
+                }
                 sections={[
                     {title: 'Friends', data: data.filter(item => item.friend)},
                     {title: '', data: data.filter(item => !item.friend)},
