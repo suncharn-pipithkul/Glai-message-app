@@ -82,7 +82,10 @@ export default function MainScreen({ navigation }) {
                             filterSearch(text);
                             setSearchText(text);
                         }} 
-                        onClear={() => setSearchText('')} />
+                        onClear={() => {
+                            setData(dataHolder);
+                            setSearchText('');
+                        }} />
                 }
 
                 showsVerticalScrollIndicator={false}
