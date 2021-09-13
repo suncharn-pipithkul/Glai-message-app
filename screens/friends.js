@@ -18,9 +18,10 @@ from '../styleComponents/MessagesStyles';
 // Context
 import { AuthContext } from '../context/AuthContext';
 
+
 export default function FriendsScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
-    const dataHolder = example;
+    let dataHolder = example;
 
     // states
     const [refreshing, setRefeshing] = useState(false);
@@ -59,13 +60,15 @@ export default function FriendsScreen({ navigation }) {
                     // console.log('added: ' + item.userName + ' ' + item.friend);
                     setLoading(true);
 
-                    // Update data array
-                    let updatedList = data.map(i => {
+                    // Update data array state
+                    let updatedList = dataHolder.map(i => {
                         if (i.id === item.id)
                             return {...i, friend: true};
                         return i;
                     })
                     setData(updatedList);
+                    dataHolder = updatedList; // Update data array holder
+                    example = updatedList;
             
                     setLoading(false);
                 }}>
@@ -198,7 +201,7 @@ const styles = StyleSheet.create({
     }
 });
 
-const example = [
+let example = [
     {
         id: '3',
         userImg: require('../assets/profileImg/user-2.jpg'),
@@ -273,4 +276,5 @@ const example = [
     },
 ];
 
-example.sort((a, b) => (a.userName > b.userName) ? 1 : -1);
+// example.sort((a, b) => (a.userName > b.userName) ? 1 : -1);
+example.sort((a, b) => a.userName > b.userName);
