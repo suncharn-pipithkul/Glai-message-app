@@ -61,7 +61,7 @@ export default function FriendsScreen({ navigation }) {
             const subscriber = firestore()
                                 .collection('Users')
                                 .onSnapshot(querySnapshot => {
-                                    const users = [];
+                                    let users = [];
 
                                     querySnapshot.forEach(docSnapshot => {
                                         users.push({
@@ -84,8 +84,6 @@ export default function FriendsScreen({ navigation }) {
         return () => subscriber();
     }, []);
 
-
-
     // States
     const [loading, setLoading] = useState(true); // loading to fetch initial data
     const [refreshing, setRefeshing] = useState(false); // loading for refreshing data
@@ -95,10 +93,8 @@ export default function FriendsScreen({ navigation }) {
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
     const [isShowNonFriend, setIsShowNonFriend] = useState(false);
 
-    // console.log(`dataFiltered: ${dataFiltered}`);
-    // console.log(`dataOriginal: ${dataOriginal}`);
+    // ********************************** DEBUG ********************************** //
     console.log('================================== BREAK ==================================');
-
     console.log(`dataOriginal:`);
     dataOriginal?.forEach(item => {
         console.log(item.photoURL);
