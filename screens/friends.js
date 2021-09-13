@@ -1,12 +1,27 @@
-import React, { useState, useContext, useCallback } from 'react';
-import { ActivityIndicator, View, Text, Image, FlatList, SectionList, TouchableHighlight, TouchableOpacity, StyleSheet} from 'react-native';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+
+// Components import(s)
+import { 
+    ActivityIndicator, 
+    View, 
+    Text, 
+    Image, 
+    SectionList, 
+    TouchableHighlight, 
+    TouchableOpacity, 
+    StyleSheet} 
+from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
-// import { Container } from '../styleComponents/MessagesStyles';
-import { Container, Card, UserImg
-    , UserImgWrapper, UserInfo, UserName
-    , SendAtText, MainTextWrapper, TopTextWrapper
-    , BottomTextWrapper, 
+import { 
+    Container, 
+    Card, 
+    UserImg, 
+    UserImgWrapper, 
+    UserInfo, 
+    UserName, 
+    MainTextWrapper, 
+    TopTextWrapper, 
     FriendText,
     CheckIcon,
     RightTagWrapper,
@@ -15,35 +30,99 @@ import { Container, Card, UserImg
     SectionHeader} 
 from '../styleComponents/MessagesStyles';
 
-// Context
+// Storage import(s)
+import firestore from '@react-native-firebase/firestore';
+
+// Context import(s)
 import { AuthContext } from '../context/AuthContext';
 
+// Styles import(s)
+import { globalStyles } from '../styles/globalStyles';
 
+const LoadingScreen = () => {
+    return (
+      <View style={globalStyles.container}>
+        <ActivityIndicator size='large'/>
+      </View>
+    );
+  };
+
+// -------------------------------- Main Component -------------------------------- //
 export default function FriendsScreen({ navigation }) {
-    const { user, onSignout } = useContext(AuthContext);
-    let dataHolder = example;
+    // let dataOriginal = example; // array that hold original data
+    // Context
+    const { user } = useContext(AuthContext);
 
-    // states
-    const [refreshing, setRefeshing] = useState(false);
+    // let dataOriginal = undefined;
+
+    // Load Data from firestore
+    useEffect(() => {
+        try {
+            const subscriber = firestore()
+                                .collection('Users')
+                                .onSnapshot(querySnapshot => {
+                                    const users = [];
+
+                                    querySnapshot.forEach(docSnapshot => {
+                                        users.push({
+                                            ...docSnapshot.data(),
+                                            key: docSnapshot.id,
+                                        });
+                                    });
+
+                                    setDataOriginal(users);
+                                    setDataFiltered(users);
+                                });
+            return () => subscriber();
+        } catch(err) {
+            alert(err);
+            console.log('@onLoadData', err);
+        } finally {
+            setLoading(false);
+        }
+
+        return () => subscriber();
+    }, []);
+
+
+
+    // States
+    const [loading, setLoading] = useState(true); // loading to fetch initial data
+    const [refreshing, setRefeshing] = useState(false); // loading for refreshing data
     const [searchText, setSearchText] = useState('');
-    const [data, setData] = useState(dataHolder);
+    const [dataOriginal, setDataOriginal] = useState(undefined); // array of unfiltered data
+    const [dataFiltered, setDataFiltered] = useState(dataOriginal || undefined); // array of filtered data for displaying cards on SectionList
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
     const [isShowNonFriend, setIsShowNonFriend] = useState(false);
 
+    // console.log(`dataFiltered: ${dataFiltered}`);
+    // console.log(`dataOriginal: ${dataOriginal}`);
+    console.log('================================== BREAK ==================================');
 
+    console.log(`dataOriginal:`);
+    dataOriginal?.forEach(item => {
+        console.log(item.photoURL);
+    });
+
+
+    // Function when user pull down the SectionList to refresh data
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
         setRefeshing(false);
     }, [refreshing])
 
+    // Function that created an array of data that match the search text 
+    // and set it as the new data state 
     const filterSearch = (text) => {
-        const newData = dataHolder.filter(item => {
-            const itemData = `${item.userName.toUpperCase()}`;
+        // Create a new data that filtered out userName that doesn't match search text
+        const newData = dataOriginal.filter(item => {
+            const itemData = `${item.displayName.toUpperCase()}`;
             return itemData.indexOf(text.toUpperCase()) > -1;
         });
 
-        setData(newData);
+        setDataFiltered(newData);
     };
+
 
 
     const UserAvatar = () => {
@@ -66,14 +145,27 @@ export default function FriendsScreen({ navigation }) {
                     setLoading(true);
 
                     // Update data array state
-                    let updatedList = dataHolder.map(i => {
-                        if (i.id === item.id)
+                    let updatedList = dataOriginal.map(i => {
+                        if (i.uid === item.uid)
                             return {...i, friend: true};
                         return i;
                     })
-                    setData(updatedList);
-                    dataHolder = updatedList; // Update data array holder
-                    example = updatedList; // Update database
+                    setDataFiltered(updatedList);
+                    setDataOriginal(updatedList);
+                    // dataOriginal = updatedList; // Update data array holder
+                    // example = updatedList; // Update database
+
+                    // update firestore Users collection
+                    // try {
+                    //     const usersCollection = firestore().collection('Users');
+                    //     const userDoc = usersCollection.doc(user.uid);
+                    //     await userDoc.update({
+                    //         friends: firestore.FieldValue.arrayUnion(item.uid),
+                    //     });
+                    // } catch(err) {
+                    //     alert(err);
+                    //     console.log('@AddButton', err);
+                    // }
             
                     setLoading(false);
                 }}>
@@ -89,111 +181,117 @@ export default function FriendsScreen({ navigation }) {
         );
     };
 
-    return (
-        <Container>
-            <Header
-                placement='left'
-                leftComponent={UserAvatar()}
-                centerComponent={{text:'Friends', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
-                // rightComponent={AddButton()}
-                centerContainerStyle={{alignSelf:'center'}}
-                rightContainerStyle={{alignSelf:'center'}}
-                containerStyle={{
-                    borderBottomWidth:0, 
-                    shadowOpacity: 0, // This is for ios
-                }}
-            />
-            <SectionList
-                keyboardShouldPersistTaps='handled'
-                showsVerticalScrollIndicator={false}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                ListHeaderComponent={
-                    <SearchBar
-                        onChangeText={text => {
-                            filterSearch(text);
-                            setSearchText(text);
-                            setIsShowNonFriend(text !== '');
-                        }} 
-                        onClear={() => {
-                            setData(dataHolder);
-                            setSearchText('');
-                            setIsShowNonFriend(false);
-                        }} />
-                }
-                sections={[
-                    {title: 'Friends', data: data.filter(item => item.friend)},
-                    isShowNonFriend? {title: '', data: data.filter(item => !item.friend)} : {title: '', data: []},
-                ]}
-                keyExtractor={item => item.id}
-                renderSectionHeader={({ section }) => (
-                    <SectionHeaderWrapper>
-                        <SectionHeader />
-                    </SectionHeaderWrapper>
-                )}
-                renderItem={({ item }) => (
-                    <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
-                        <UserInfo>
-                            <UserImgWrapper>
-                                <UserImg source={item.userImg}/>
-                            </UserImgWrapper>
-
-                            <MainTextWrapper>
-                                <TextAlignWrapper>
-                                    <TopTextWrapper>
-                                        <UserName numberOfLines={1}>{item.userName}</UserName>
-                                        {
-                                            !item.friend ? <AddButton item={item}/> :
-                                                <RightTagWrapper>
-                                                    <FriendText>friend</FriendText>
-                                                    <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
-                                                </RightTagWrapper>
-                                        }
-                                        
-                                    </TopTextWrapper>
-                                </TextAlignWrapper>
-                            </MainTextWrapper>
-                        </UserInfo>
-                    </Card>
-                )}
-            />
-            {/* <FlatList
-                keyboardShouldPersistTaps='handled'
-                data={example}
-                keyExtractor={item => item.id}
-                ListHeaderComponent={() => <SearchBar/>}
-
-                showsVerticalScrollIndicator={false}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                renderItem={({ item }) => (
-                    <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
-                        <UserInfo>
-                            <UserImgWrapper>
-                                <UserImg source={item.userImg}/>
-                            </UserImgWrapper>
-
-                            <MainTextWrapper>
-                                <TextAlignWrapper>
-                                    <TopTextWrapper>
-                                        <UserName numberOfLines={1}>{item.userName}</UserName>
-                                        {
-                                            !item.friend ? null :
-                                                <RightTagWrapper>
-                                                    <FriendText>friend</FriendText>
-                                                    <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
-                                                </RightTagWrapper>
-                                        }
-                                        
-                                    </TopTextWrapper>
-                                </TextAlignWrapper>
-                            </MainTextWrapper>
-                        </UserInfo>
-                    </Card>
-                )}
-            /> */}
-        </Container>
-    );
+    if (loading)
+        return <LoadingScreen />;
+    else {
+        return (
+            <Container>
+                <Header
+                    placement='left'
+                    leftComponent={UserAvatar()}
+                    centerComponent={{text:'Friends', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
+                    centerContainerStyle={{alignSelf:'center'}}
+                    rightContainerStyle={{alignSelf:'center'}}
+                    containerStyle={{
+                        borderBottomWidth:0, 
+                        shadowOpacity: 0, // This is for ios
+                    }}
+                />
+                <SectionList
+                    keyboardShouldPersistTaps='handled'
+                    showsVerticalScrollIndicator={false}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    ListHeaderComponent={
+                        <SearchBar
+                            onChangeText={text => {
+                                filterSearch(text);
+                                setSearchText(text);
+                                setIsShowNonFriend(text !== '');
+                            }} 
+                            onClear={() => {
+                                setDataFiltered(dataOriginal);
+                                setSearchText('');
+                                setIsShowNonFriend(false);
+                            }} />
+                    }
+                    sections={[
+                        {title: 'Friends', data:  dataFiltered ? dataFiltered.filter(item => item.friend) : []},
+                        isShowNonFriend? {title: '', data: dataFiltered?.filter(item => !item.friend)} : {title: '', data: []},
+                    ]}
+                    keyExtractor={item => item.id}
+                    renderSectionHeader={({ section }) => (
+                        <SectionHeaderWrapper>
+                            <SectionHeader />
+                        </SectionHeaderWrapper>
+                    )}
+                    renderItem={({ item }) => (
+                        <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
+                            <UserInfo>
+                                <UserImgWrapper>
+                                    <UserImg source={item.photoURL ? 
+                                                        {uri:item.photoURL} 
+                                                        : require('../assets/profileImg/blank-profile-picture.png')} // default user image
+                                    /> 
+                                </UserImgWrapper>
+    
+                                <MainTextWrapper>
+                                    <TextAlignWrapper>
+                                        <TopTextWrapper>
+                                            <UserName numberOfLines={1}>{item.displayName}</UserName>
+                                            {
+                                                !item.friend ? <AddButton item={item}/> :
+                                                    <RightTagWrapper>
+                                                        <FriendText>friend</FriendText>
+                                                        <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
+                                                    </RightTagWrapper>
+                                            }
+                                            
+                                        </TopTextWrapper>
+                                    </TextAlignWrapper>
+                                </MainTextWrapper>
+                            </UserInfo>
+                        </Card>
+                    )}
+                />
+                {/* <FlatList
+                    keyboardShouldPersistTaps='handled'
+                    data={example}
+                    keyExtractor={item => item.id}
+                    ListHeaderComponent={() => <SearchBar/>}
+    
+                    showsVerticalScrollIndicator={false}
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    renderItem={({ item }) => (
+                        <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
+                            <UserInfo>
+                                <UserImgWrapper>
+                                    <UserImg source={item.userImg}/>
+                                </UserImgWrapper>
+    
+                                <MainTextWrapper>
+                                    <TextAlignWrapper>
+                                        <TopTextWrapper>
+                                            <UserName numberOfLines={1}>{item.userName}</UserName>
+                                            {
+                                                !item.friend ? null :
+                                                    <RightTagWrapper>
+                                                        <FriendText>friend</FriendText>
+                                                        <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
+                                                    </RightTagWrapper>
+                                            }
+                                            
+                                        </TopTextWrapper>
+                                    </TextAlignWrapper>
+                                </MainTextWrapper>
+                            </UserInfo>
+                        </Card>
+                    )}
+                /> */}
+            </Container>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
