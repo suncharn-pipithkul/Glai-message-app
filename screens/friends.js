@@ -28,6 +28,8 @@ export default function FriendsScreen({ navigation }) {
     const [searchText, setSearchText] = useState('');
     const [data, setData] = useState(dataHolder);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
+    const [isShowNonFriend, setIsShowNonFriend] = useState(false);
+
 
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
@@ -111,15 +113,17 @@ export default function FriendsScreen({ navigation }) {
                         onChangeText={text => {
                             filterSearch(text);
                             setSearchText(text);
+                            setIsShowNonFriend(text !== '');
                         }} 
                         onClear={() => {
                             setData(dataHolder);
                             setSearchText('');
+                            setIsShowNonFriend(false);
                         }} />
                 }
                 sections={[
                     {title: 'Friends', data: data.filter(item => item.friend)},
-                    {title: '', data: data.filter(item => !item.friend)},
+                    isShowNonFriend? {title: '', data: data.filter(item => !item.friend)} : {title: '', data: []},
                 ]}
                 keyExtractor={item => item.id}
                 renderSectionHeader={({ section }) => (
