@@ -56,8 +56,11 @@ export default function FriendsScreen({ navigation }) {
         const [loading, setLoading] = useState(false);
 
         return (
-            <TouchableOpacity activeOpacity={0.4} style={styles.addButton} onPress={() => {
-                    // console.log('added: ' + item.userName + ' ' + item.friend);
+            <TouchableOpacity 
+                hitSlop={{top:4, left:4, bottom:4, right:4}} 
+                activeOpacity={0.4} 
+                style={styles.addButton} 
+                onPress={() => {
                     setLoading(true);
 
                     // Update data array state
@@ -68,7 +71,7 @@ export default function FriendsScreen({ navigation }) {
                     })
                     setData(updatedList);
                     dataHolder = updatedList; // Update data array holder
-                    example = updatedList;
+                    example = updatedList; // Update database
             
                     setLoading(false);
                 }}>
