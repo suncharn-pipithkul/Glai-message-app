@@ -62,16 +62,29 @@ export default function FriendsScreen({ navigation }) {
                                 .collection('Users')
                                 .onSnapshot(querySnapshot => {
                                     let users = [];
+                                    let friendsList = [];
 
                                     querySnapshot.forEach(docSnapshot => {
+                                        if (docSnapshot.data()['uid'] === user.uid) {
+                                            friendsList = docSnapshot.data()['friends'];
+                                        }
+
                                         users.push({
                                             ...docSnapshot.data(),
                                             key: docSnapshot.id,
                                         });
                                     });
 
+                                    // add property boolean isFriend? to each object in the list
+                                    for(const element of users) {
+                                        element.isFriend = friendsList.includes(element.uid);
+                                    }
+                                    // users.map(obj => ({...obj, isFriend: friendsList.includes(obj.uid)}));
+
+                                    // Initial data (all users)
                                     setDataOriginal(users);
                                     setDataFiltered(users);
+                                    console.log('');
                                 });
             return () => subscriber();
         } catch(err) {
@@ -117,6 +130,7 @@ export default function FriendsScreen({ navigation }) {
         });
 
         setDataFiltered(newData);
+        console.log('');
     };
 
 
@@ -128,6 +142,8 @@ export default function FriendsScreen({ navigation }) {
             </TouchableHighlight>
         );
     }
+
+    
 
     const AddButton = ({ item }) => {
         const [loading, setLoading] = useState(false);
@@ -177,6 +193,26 @@ export default function FriendsScreen({ navigation }) {
         );
     };
 
+    const getNonFriendsList = () => {
+        if (isShowNonFriend) {
+            const filterNonFriend = (item) => {
+                return !item.isFriend;
+            }
+            const newData = dataFiltered.filter(filterNonFriend);
+            return {title: 'NonFriends', data: newData};
+        } else {
+            return {title: 'NonFriends', data: []};
+        }
+    }
+
+    const getFriendsList = () => {
+        const filterFriend = (item) => {
+            return item.isFriend;
+        }
+        const newData = dataFiltered.filter(filterFriend);
+        return newData;
+    }
+
     if (loading)
         return <LoadingScreen />;
     else {
@@ -193,6 +229,7 @@ export default function FriendsScreen({ navigation }) {
                         shadowOpacity: 0, // This is for ios
                     }}
                 />
+                {!refreshing ? 
                 <SectionList
                     keyboardShouldPersistTaps='handled'
                     showsVerticalScrollIndicator={false}
@@ -206,23 +243,28 @@ export default function FriendsScreen({ navigation }) {
                                 setIsShowNonFriend(text !== '');
                             }} 
                             onClear={() => {
-                                setDataFiltered(dataOriginal);
+                                setRefeshing(true);
                                 setSearchText('');
                                 setIsShowNonFriend(false);
+                                setDataFiltered(dataOriginal);
+                                setRefeshing(false);
                             }} />
                     }
                     sections={[
-                        {title: 'Friends', data:  dataFiltered ? dataFiltered.filter(item => item.friend) : []},
-                        isShowNonFriend? {title: '', data: dataFiltered?.filter(item => !item.friend)} : {title: '', data: []},
+                        {title: 'Friends', data:  dataFiltered ? getFriendsList() : []},
+                        getNonFriendsList()
+                        // isShowNonFriend? {title: '', data: dataFiltered?.filter(item => !item.isFriend)} : {title: '', data: []},
                     ]}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.uid}
                     renderSectionHeader={({ section }) => (
                         <SectionHeaderWrapper>
-                            <SectionHeader />
+                            <SectionHeader>
+                                <Text>{section.title}</Text>
+                            </SectionHeader>
                         </SectionHeaderWrapper>
                     )}
                     renderItem={({ item }) => (
-                        <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
+                        <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {displayName: item.displayName})}>
                             <UserInfo>
                                 <UserImgWrapper>
                                     <UserImg source={item.photoURL ? 
@@ -249,7 +291,7 @@ export default function FriendsScreen({ navigation }) {
                             </UserInfo>
                         </Card>
                     )}
-                />
+                /> : <LoadingScreen />}
                 {/* <FlatList
                     keyboardShouldPersistTaps='handled'
                     data={example}
