@@ -52,7 +52,7 @@ export default function FriendsScreen({ navigation }) {
     // Context
     const { user } = useContext(AuthContext);
 
-    // Load Data from firestore
+    // Load All users Data from firestore
     useEffect(() => {
         try {
             const subscriber = firestore()
@@ -62,13 +62,14 @@ export default function FriendsScreen({ navigation }) {
                                     let friendsList = [];
 
                                     querySnapshot.forEach(docSnapshot => {
-                                        if (docSnapshot.data()['uid'] === user.uid)
+                                        if (docSnapshot.data()['uid'] === user.uid) {
                                             friendsList = docSnapshot.data()['friends'];
-
-                                        users.push({
-                                            ...docSnapshot.data(),
-                                            key: docSnapshot.id,
-                                        });
+                                        } else {  // don't add the current user into his/her own searchable users.
+                                            users.push({
+                                                ...docSnapshot.data(),
+                                                key: docSnapshot.id,
+                                            });
+                                        }
                                     });
 
                                     // add property boolean isFriend? to each object in the list
@@ -134,7 +135,7 @@ export default function FriendsScreen({ navigation }) {
     }
 
     const AddButton = ({ item }) => {
-        const [loading, setLoading] = useState(false);
+        const [loadAdding, setLoadAdding] = useState(false);
 
         return (
             <TouchableOpacity 
@@ -142,7 +143,7 @@ export default function FriendsScreen({ navigation }) {
                 activeOpacity={0.4} 
                 style={styles.addButton} 
                 onPress={() => {
-                    setLoading(true);
+                    setLoadAdding(true);
 
                     // Update data array state
                     let updatedList = dataOriginal.map(i => {
@@ -152,32 +153,23 @@ export default function FriendsScreen({ navigation }) {
                     })
                     setDataFiltered(updatedList);
                     setDataOriginal(updatedList);
-                    // dataOriginal = updatedList; // Update data array holder
-                    // example = updatedList; // Update database
-
-                    // update firestore Users collection
-                    // try {
-                    //     const usersCollection = firestore().collection('Users');
-                    //     const userDoc = usersCollection.doc(user.uid);
-                    //     await userDoc.update({
-                    //         friends: firestore.FieldValue.arrayUnion(item.uid),
-                    //     });
-                    // } catch(err) {
-                    //     alert(err);
-                    //     console.log('@AddButton', err);
-                    // }
+                    
+                    // Update firestore Users collection
+                    try {
+                        const usersCollection = firestore().collection('Users');
+                        const userDoc = usersCollection.doc(user.uid);
+                        userDoc.update({
+                            friends: firestore.FieldValue.arrayUnion(item.uid),
+                        });
+                    } catch(err) {
+                        alert(err);
+                        console.log('@AddButton', err);
+                    }
             
-                    setLoading(false);
+                    setLoadAdding(false);
                 }}>
-                {!loading ? <Text style={{fontSize:18, color:'white'}}>+ add</Text> : <ActivityIndicator color='white'/>}
+                {!loadAdding ? <Text style={{fontSize:18, color:'white'}}>+ add</Text> : <ActivityIndicator color='white'/>}
             </TouchableOpacity>
-            // <TouchableHighlight 
-            //     onPressIn={() => setIsPressed(true)}
-            //     onPressOut={() => setIsPressed(false)}
-            //     underlayColor='#0073CE'
-            //     style={styles.addButton}>
-            //     <Text style={{fontSize:18, color:isPressed ? 'white':'#0073CE'}}>+ add</Text>
-            // </TouchableHighlight>
         );
     };
 
@@ -243,7 +235,7 @@ export default function FriendsScreen({ navigation }) {
                                         <TopTextWrapper>
                                             <UserName numberOfLines={1}>{item.displayName}</UserName>
                                             {
-                                                !item.friend ? <AddButton item={item}/> :
+                                                !item.isFriend ? <AddButton item={item}/> :
                                                     <RightTagWrapper>
                                                         <FriendText>friend</FriendText>
                                                         <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
@@ -257,41 +249,6 @@ export default function FriendsScreen({ navigation }) {
                         </Card>
                     )}
                 /> : <LoadingScreen />}
-                {/* <FlatList
-                    keyboardShouldPersistTaps='handled'
-                    data={example}
-                    keyExtractor={item => item.id}
-                    ListHeaderComponent={() => <SearchBar/>}
-    
-                    showsVerticalScrollIndicator={false}
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    renderItem={({ item }) => (
-                        <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
-                            <UserInfo>
-                                <UserImgWrapper>
-                                    <UserImg source={item.userImg}/>
-                                </UserImgWrapper>
-    
-                                <MainTextWrapper>
-                                    <TextAlignWrapper>
-                                        <TopTextWrapper>
-                                            <UserName numberOfLines={1}>{item.userName}</UserName>
-                                            {
-                                                !item.friend ? null :
-                                                    <RightTagWrapper>
-                                                        <FriendText>friend</FriendText>
-                                                        <CheckIcon name='checkmark-circle' size={24} color='#2089DC'/>
-                                                    </RightTagWrapper>
-                                            }
-                                            
-                                        </TopTextWrapper>
-                                    </TextAlignWrapper>
-                                </MainTextWrapper>
-                            </UserInfo>
-                        </Card>
-                    )}
-                /> */}
             </Container>
         );
     }
