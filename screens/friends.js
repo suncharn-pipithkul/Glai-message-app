@@ -49,11 +49,8 @@ const LoadingScreen = () => {
 
 // -------------------------------- Main Component -------------------------------- //
 export default function FriendsScreen({ navigation }) {
-    // let dataOriginal = example; // array that hold original data
     // Context
     const { user } = useContext(AuthContext);
-
-    // let dataOriginal = undefined;
 
     // Load Data from firestore
     useEffect(() => {
@@ -65,9 +62,8 @@ export default function FriendsScreen({ navigation }) {
                                     let friendsList = [];
 
                                     querySnapshot.forEach(docSnapshot => {
-                                        if (docSnapshot.data()['uid'] === user.uid) {
+                                        if (docSnapshot.data()['uid'] === user.uid)
                                             friendsList = docSnapshot.data()['friends'];
-                                        }
 
                                         users.push({
                                             ...docSnapshot.data(),
@@ -76,15 +72,12 @@ export default function FriendsScreen({ navigation }) {
                                     });
 
                                     // add property boolean isFriend? to each object in the list
-                                    for(const element of users) {
+                                    for(const element of users)
                                         element.isFriend = friendsList.includes(element.uid);
-                                    }
-                                    // users.map(obj => ({...obj, isFriend: friendsList.includes(obj.uid)}));
 
                                     // Initial data (all users)
                                     setDataOriginal(users);
                                     setDataFiltered(users);
-                                    console.log('');
                                 });
             return () => subscriber();
         } catch(err) {
@@ -130,10 +123,7 @@ export default function FriendsScreen({ navigation }) {
         });
 
         setDataFiltered(newData);
-        console.log('');
     };
-
-
 
     const UserAvatar = () => {
         return (
@@ -142,8 +132,6 @@ export default function FriendsScreen({ navigation }) {
             </TouchableHighlight>
         );
     }
-
-    
 
     const AddButton = ({ item }) => {
         const [loading, setLoading] = useState(false);
@@ -193,26 +181,6 @@ export default function FriendsScreen({ navigation }) {
         );
     };
 
-    const getNonFriendsList = () => {
-        if (isShowNonFriend) {
-            const filterNonFriend = (item) => {
-                return !item.isFriend;
-            }
-            const newData = dataFiltered.filter(filterNonFriend);
-            return {title: 'NonFriends', data: newData};
-        } else {
-            return {title: 'NonFriends', data: []};
-        }
-    }
-
-    const getFriendsList = () => {
-        const filterFriend = (item) => {
-            return item.isFriend;
-        }
-        const newData = dataFiltered.filter(filterFriend);
-        return newData;
-    }
-
     if (loading)
         return <LoadingScreen />;
     else {
@@ -251,16 +219,13 @@ export default function FriendsScreen({ navigation }) {
                             }} />
                     }
                     sections={[
-                        {title: 'Friends', data:  dataFiltered ? getFriendsList() : []},
-                        getNonFriendsList()
-                        // isShowNonFriend? {title: '', data: dataFiltered?.filter(item => !item.isFriend)} : {title: '', data: []},
+                        {title: 'Friends', data:  dataFiltered ? dataFiltered.filter(item => item.isFriend) : []},
+                        {title: 'NonFriends', data: isShowNonFriend ? dataFiltered?.filter(item => !item.isFriend) : []},
                     ]}
                     keyExtractor={item => item.uid}
                     renderSectionHeader={({ section }) => (
                         <SectionHeaderWrapper>
-                            <SectionHeader>
-                                <Text>{section.title}</Text>
-                            </SectionHeader>
+                            <SectionHeader />
                         </SectionHeaderWrapper>
                     )}
                     renderItem={({ item }) => (
