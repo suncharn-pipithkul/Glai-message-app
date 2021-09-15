@@ -40,6 +40,9 @@ import { AuthContext } from '../context/AuthContext';
 // Styles import(s)
 import { globalStyles } from '../styles/globalStyles';
 
+// Utilities import(s)
+import _ from 'lodash';
+
 const LoadingScreen = () => {
     return (
       <View style={globalStyles.container}>
@@ -129,7 +132,7 @@ export default function FriendsScreen({ navigation }) {
 
     const handleCardPress = async (item) => {
         try {
-            const roomExist = undefined;
+            let roomExistId = undefined;
 
             // If current user has a roomchat with this user, get info of that roomchat
             const usersCollection = firestore().collection('Users');
@@ -140,47 +143,52 @@ export default function FriendsScreen({ navigation }) {
             for (const rid of rooms) {
                 let curRoomDoc = roomsCollection.doc(rid);
                 let members = (await curRoomDoc.get()).get('members'); // all members for this room
-                
+                if (_.isEqual(new Set(members), new Set([user.uid, item.uid]))) {
+                    roomExistId = rid;
+                    break;
+                }
             }
 
-            
-            // // Else create a new room
-            // // Create a new room in firestore
-            // // Set up Rooms collection
-            // const roomDoc = roomsCollection.doc();
-            // await roomDoc.set({
-            //     rid: roomDoc.id,
-            //     createdBy: user.uid,
-            //     createdAt: firestore.FieldValue.serverTimestamp(),
-            //     modifiedAt: firestore.FieldValue.serverTimestamp(),
-            //     type: 1, // 1-1 chat
-            //     name: null, // name of the room
-            //     members: [user.uid, item.uid],
-            //     recentMessage: {
-            //         mid: null,
-            //         sender: null,
-            //         text: null,
-            //         sendAt: null,
-            //         modifiedAt: null,
-            //         readBy: [],
-            //     },
-            //     messages: [],
-            // });
+            let roomDoc = undefined;
+            if (roomExistId) {
+                roomDoc = roomsCollection.doc(roomExistId); // get the existing room
+            } else {  // Else create a new room
+                // Set up Rooms collection
+                roomDoc = roomsCollection.doc();
+                await roomDoc.set({
+                    rid: roomDoc.id,
+                    createdBy: user.uid,
+                    createdAt: firestore.FieldValue.serverTimestamp(),
+                    modifiedAt: firestore.FieldValue.serverTimestamp(),
+                    type: 1, // 1-1 chat
+                    name: null, // name of the room
+                    members: [user.uid, item.uid],
+                    recentMessage: {
+                        mid: null,
+                        sender: null,
+                        text: null,
+                        sendAt: null,
+                        modifiedAt: null,
+                        readBy: [],
+                    },
+                    messages: [],
+                });
+    
+                // Update current user's rooms
+                await currentUserDoc.update({
+                    rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
+                });
+    
+                // Update other user's rooms
+                const otherUserDoc = usersCollection.doc(item.uid);
+                await otherUserDoc.update({
+                    rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
+                });
+    
+            }
 
-            // // Update current user's rooms
-            // await currentUserDoc.update({
-            //     rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
-            // });
-
-            // // Update other user's rooms
-            // const otherUserDoc = usersCollection.doc(item.uid);
-            // await otherUserDoc.update({
-            //     rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
-            // });
-
-            // // navigate to chat screen
-            // navigation.navigate('Chat', {item: item, rid: roomDoc.id})
-
+            // navigate to chat screen
+            navigation.navigate('Chat', {item: item, rid: roomDoc.id})
         } catch(err) {
             alert(err);
             console.log('@handleCardPress', err);
