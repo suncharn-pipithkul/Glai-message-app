@@ -13,6 +13,7 @@ import { globalStyles } from '../styles/globalStyles';
 export default function ChatScreen({ navigation }) {
     const { user, onSignout } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
         setMessages([
@@ -35,22 +36,14 @@ export default function ChatScreen({ navigation }) {
 
     return (
         <GiftedChat
-        messages={messages}
-        onSend={messages => onSend(messages)}
-        user={{
-            _id: 1,
-        }}
+          messages={messages}
+          onSend={message => onSend(message)}
+          user={{
+              _id: 1,
+              name: user.displayNem,
+              avatar: user.photoURL,
+          }}
         />
-        // <View>
-        //     <Text>Chat Screen</Text>
-        //     <Button 
-        //         title='Return'
-        //         containerStyle={globalStyles.button} 
-        //         buttonStyle={globalStyles.button}
-        //         raised
-        //         onPress={() => navigation.navigate('Main')}
-        //     />
-        // </View>
     );
 }
 
