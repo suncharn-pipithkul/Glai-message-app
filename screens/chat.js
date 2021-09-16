@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, useWindowDimensions, Text, View, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Storage import(s)
@@ -12,6 +12,7 @@ import { AuthContext } from '../context/AuthContext';
 
 // styles
 import { globalStyles } from '../styles/globalStyles';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 export default function ChatScreen({ navigation, route }) {
@@ -90,9 +91,11 @@ export default function ChatScreen({ navigation, route }) {
 
     // Function longPress message
     const onLongPress = (context, message) => {
-      let options = ['Copy Text', 'Delete', 'Cancel'];
-      let cancelButtonIndex = 2;
+      let messagesCollection = firestore().collection('Rooms').doc(rid).collection('messages');
+      let options = ['Copy Text', 'Cancel'];
+      let cancelButtonIndex = 1;
 
+      // long press on current user's message
       if (user.uid === message.sender._id) {
         options = ['Edit', 'Copy Text', 'Delete', 'Cancel'];
         cancelButtonIndex = 3;
@@ -101,20 +104,41 @@ export default function ChatScreen({ navigation, route }) {
         options: options,
         cancelButtonIndex: cancelButtonIndex,
 
-      }, (buttonIndex) => {
+      }, async (buttonIndex) => {
         switch (buttonIndex) {
           case 0: // edit
-            Alert.alert(message._id);
+            await messagesCollection.doc(message._id).update({
+              text: 'good',
+              modifiedAt: firestore.FieldValue.serverTimestamp(),
+            });
             break;
           case 1: // copy text
             break;
           case 2: // delete text
+            Alert.alert('Delete Message', 'Are you sure you want to delete this message?', [
+              { text: 'Cancel', style: 'cancel'}, // cancel button
+              {
+                text: 'Delete',
+                onPress: async () => {
+                  await messagesCollection.doc(message._id).delete();
+                },
+              },
+            ])
             break;
         }
       });
     };
 
     // Render Components
+    const renderInputToolbar = ( props ) => {
+      return (
+        <InputToolbar 
+          {...props}
+
+        />
+      );
+    };
+
     const scrollToBottomComponent = () => {
       return (
         <View>
