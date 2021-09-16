@@ -171,7 +171,7 @@ export default function FriendsScreen({ navigation }) {
                         modifiedAt: null,
                         readBy: [],
                     },
-                    messages: [],
+                    // messages: [],
                 });
     
                 // Update current user's rooms
@@ -184,7 +184,6 @@ export default function FriendsScreen({ navigation }) {
                 await otherUserDoc.update({
                     rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
                 });
-    
             }
 
             // navigate to chat screen
