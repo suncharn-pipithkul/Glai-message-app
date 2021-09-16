@@ -4,6 +4,9 @@ import { Button } from 'react-native-elements';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Storage import(s)
+import firestore from '@react-native-firebase/firestore';
+
 // Context
 import { AuthContext } from '../context/AuthContext';
 
@@ -11,33 +14,79 @@ import { AuthContext } from '../context/AuthContext';
 import { globalStyles } from '../styles/globalStyles';
 
 
-export default function ChatScreen({ navigation }) {
+export default function ChatScreen({ navigation, route }) {
     const window = useWindowDimensions();
+    const { rid } = route.params;
 
     const { user } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
-        setMessages(m);
-        // setMessages([
-        //   {
-        //     _id: 1,
-        //     text: 'Hello developer',
-        //     createdAt: new Date(),
-        //     user: {
-        //       _id: 2,
-        //       name: 'React Native',
-        //       avatar: 'https://placeimg.com/140/140/any',
-        //     },
-        //   },
-        // ])
-      }, []);
+      const messagesListener = firestore().collection('Rooms')
+                                          .doc(rid)
+                                          .collection('messages')
+                                          .orderBy('createdAt', 'desc')
+                                          .onSnapshot(querySnapshot => {
+                                            const messages = querySnapshot.docs.map(doc => {
+                                              const firebaseData = doc.data();
+
+                                              const data = {
+                                                _id: doc.id,
+                                                text: '',
+                                                createdAt: firestore.FieldValue.serverTimestamp(),
+                                                ...firebaseData
+                                              };
+
+                                              if (!firebaseData.system) {
+                                                data.user = {
+                                                  ...firebaseData.sender,
+                                                  name: firebaseData.sender.name
+                                                };
+                                              }
+
+                                              return data;
+                                            });
+
+                                            setMessages(messages);
+                                          });
+      
+      return () => messagesListener(); // cleanup listener
+    }, []);
     
-    const onSend = useCallback((messages = []) => {
-      setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    const onSend = useCallback( async (messages = []) => {
+      const text = messages[0].text; // get the newest text
+
+      // Stored new message in firestore
+      await firestore().collection('Rooms').doc(rid).collection('messages').add({
+        text,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        modifiedAt: null,
+        readBy: [],
+        sender: {
+          _id: user.uid,
+          name: user.displayName, 
+          avatar: user.photoURL
+        }
+      });
+
+      // Stored recent message in firestore
+      await firestore().collection('Rooms').doc(rid).set({
+        recentMessage: {
+          text,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+          modifiedAt: null,
+          readBy: [],
+          sender: {
+            _id: user.uid,
+            name: user.displayName, 
+            avatar: user.photoURL
+          }
+        }
+      }, {merge: true});
     }, []);
 
+    // Render Components
     const scrollToBottomComponent = () => {
       return (
         <View>
@@ -79,7 +128,7 @@ export default function ChatScreen({ navigation }) {
           messages={messages}
           onSend={message => onSend(message)}
           user={{
-              _id: 1,
+              _id: user.uid,
               name: user.displayName,
               avatar: user.photoURL,
           }}

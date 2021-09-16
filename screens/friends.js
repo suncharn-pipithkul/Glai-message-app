@@ -187,7 +187,7 @@ export default function FriendsScreen({ navigation }) {
             }
 
             // navigate to chat screen
-            navigation.navigate('Chat', {item: item, rid: roomDoc.id})
+            navigation.navigate('Chat', {otherUser: item, rid: roomDoc.id})
         } catch(err) {
             alert(err);
             console.log('@handleCardPress', err);
