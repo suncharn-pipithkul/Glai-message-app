@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { StyleSheet, useWindowDimensions, Text, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, Text, View, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -88,6 +88,32 @@ export default function ChatScreen({ navigation, route }) {
       }, {merge: true});
     }, []);
 
+    // Function longPress message
+    const onLongPress = (context, message) => {
+      let options = ['Copy Text', 'Delete', 'Cancel'];
+      let cancelButtonIndex = 2;
+
+      if (user.uid === message.sender._id) {
+        options = ['Edit', 'Copy Text', 'Delete', 'Cancel'];
+        cancelButtonIndex = 3;
+      }
+      context.actionSheet().showActionSheetWithOptions({
+        options: options,
+        cancelButtonIndex: cancelButtonIndex,
+
+      }, (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0: // edit
+            Alert.alert(message._id);
+            break;
+          case 1: // copy text
+            break;
+          case 2: // delete text
+            break;
+        }
+      });
+    };
+
     // Render Components
     const scrollToBottomComponent = () => {
       return (
@@ -136,6 +162,7 @@ export default function ChatScreen({ navigation, route }) {
           }}
           alwaysShowSend
           scrollToBottom
+          onLongPress={onLongPress} // long press message bubble
           renderBubble={renderBubble}
           renderSend={renderSend}
           scrollToBottomComponent={scrollToBottomComponent}
