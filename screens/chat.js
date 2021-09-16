@@ -22,24 +22,25 @@ export default function ChatScreen({ navigation, route }) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
 
+    // Load messages for this room from firestore
     useEffect(() => {
       const messagesListener = firestore().collection('Rooms')
                                           .doc(rid)
                                           .collection('messages')
                                           .orderBy('createdAt', 'desc')
                                           .onSnapshot(querySnapshot => {
-                                            const messages = querySnapshot.docs.map(doc => {
+                                            const newMessages = querySnapshot.docs.map(doc => {
                                               const firebaseData = doc.data();
 
                                               const data = {
-                                                _id: doc.id,
+                                                _id: doc.id, // message id for Gifted chat
                                                 text: '',
-                                                createdAt: firestore.FieldValue.serverTimestamp(),
-                                                ...firebaseData
+                                                ...firebaseData,
+                                                createdAt: firebaseData.createdAt?.toDate(),
                                               };
 
                                               if (!firebaseData.system) {
-                                                data.user = {
+                                                data.user = { // Gifted chat stored sender as user
                                                   ...firebaseData.sender,
                                                   name: firebaseData.sender.name
                                                 };
@@ -48,12 +49,13 @@ export default function ChatScreen({ navigation, route }) {
                                               return data;
                                             });
 
-                                            setMessages(messages);
+                                            setMessages(newMessages);
                                           });
       
       return () => messagesListener(); // cleanup listener
     }, []);
     
+    // Save new message to firestore on send button clicked
     const onSend = useCallback( async (messages = []) => {
       const text = messages[0].text; // get the newest text
 
