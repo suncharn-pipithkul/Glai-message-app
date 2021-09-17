@@ -32,7 +32,7 @@ export default function AddFriendsScreen({ navigation }) {
     const onRefresh = useCallback( async () => {
         setRefeshing(true);
         setRefeshing(false);
-    }, [refreshing])
+    }, [refreshing]);
 
     const backArrow = () => {
         return (

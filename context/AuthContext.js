@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
                             displayName: userName,
                             email: email,
                             photoURL: url,
-                            room: [],
+                            rooms: [],
                             friends: [],
                         });
 

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image, StatusBar } from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image, Alert } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
@@ -26,10 +26,12 @@ const textDisplayFormat = (text) => {
 
 export default function MainScreen({ navigation }) {
     const { user } = useContext(AuthContext);
+    const dataHolder = example;
 
     // states
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [data, setData] = useState(dataHolder);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
@@ -37,8 +39,18 @@ export default function MainScreen({ navigation }) {
         setRefeshing(false);
     }, [refreshing])
 
+    const filterSearch = (text) => {
+        const newData = dataHolder.filter(item => {
+            const itemData = `${item.userName.toUpperCase()}`;
+            return itemData.indexOf(text.toUpperCase()) > -1;
+        });
+
+        setData(newData);
+    };
 
     const UserAvatar = () => {
+        // console.log(user);
+
         return (
             <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
                 <Image 
@@ -66,9 +78,19 @@ export default function MainScreen({ navigation }) {
             />
             <FlatList
                 keyboardShouldPersistTaps='handled'
-                data={example}
+                data={data}
                 keyExtractor={item => item.id}
-                ListHeaderComponent={() => <SearchBar/>}
+                ListHeaderComponent={
+                    <SearchBar 
+                        onChangeText={text => {
+                            filterSearch(text);
+                            setSearchText(text);
+                        }} 
+                        onClear={() => {
+                            setData(dataHolder);
+                            setSearchText('');
+                        }} />
+                }
 
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}

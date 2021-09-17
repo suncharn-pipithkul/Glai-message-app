@@ -6,7 +6,7 @@ import {
     SearchBarInput } from '../styleComponents/MessagesStyles';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export const SearchBar = () => {
+export const SearchBar = ( props ) => {
     const [searchText, setSearchText] = useState('');
     const input = useRef();
 
@@ -19,21 +19,29 @@ export const SearchBar = () => {
                 <MaterialIcons name="search" size={24} color="#808080" />
             </SearchBarIconWrapper>
             <SearchBarInput 
+                {... props}
                 ref={input} 
                 placeholder='Search' 
                 returnKeyType='search'
-                onChangeText={text => setSearchText(text)}/>
+                onSubmitEditing={event => {
+                    if (props.onSubmitEditing) props.onSubmitEditing(event);
+                }}
+                onChangeText={text => {
+                    if (props.onChangeText) props.onChangeText(text);
+                    setSearchText(text);
+                }}/>
             {searchText ?
                 <SearchBarIconWrapper
                     accessible
                     accessibleLabel='Clear search'
                     onPress={() => {
+                        if (props.onClear) props.onClear();
                         setSearchText('');
                         input.current.clear();
                     }}>
                     <MaterialIcons name="cancel" size={18} color="#808080" />
-                </SearchBarIconWrapper> : null
-            }
+                </SearchBarIconWrapper> 
+                : null}
         </SearchBarContainer>
     );
 };
