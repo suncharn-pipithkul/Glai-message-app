@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, useWindowDimensions, Text, View, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat'
+import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Storage import(s)
@@ -113,15 +114,14 @@ export default function ChatScreen({ navigation, route }) {
             });
             break;
           case 1: // copy text
+            Clipboard.setString(message.text);
             break;
           case 2: // delete text
             Alert.alert('Delete Message', 'Are you sure you want to delete this message?', [
               { text: 'Cancel', style: 'cancel'}, // cancel button
-              {
+              { // delete button
                 text: 'Delete',
-                onPress: async () => {
-                  await messagesCollection.doc(message._id).delete();
-                },
+                onPress: () => messagesCollection.doc(message._id).delete(),
               },
             ])
             break;
@@ -134,7 +134,17 @@ export default function ChatScreen({ navigation, route }) {
       return (
         <InputToolbar 
           {...props}
+          containerStyle={{borderRadius:30, marginLeft:5, marginRight:5}}
+          renderComposer={renderComposer}
+        />
+      );
+    };
 
+    const renderComposer = ( props ) => {
+      return (
+        <TextInput 
+          {...props}
+          style={{flex:1}}
         />
       );
     };
@@ -189,6 +199,7 @@ export default function ChatScreen({ navigation, route }) {
           onLongPress={onLongPress} // long press message bubble
           renderBubble={renderBubble}
           renderSend={renderSend}
+          renderInputToolbar={renderInputToolbar}
           scrollToBottomComponent={scrollToBottomComponent}
           scrollToBottomStyle={{
             position: 'absolute',
@@ -199,221 +210,4 @@ export default function ChatScreen({ navigation, route }) {
 }
 
 
-
 const styles = StyleSheet.create({});
-
-
-
-
-const m = [
-  {
-    _id: 1,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 2,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 3,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 4,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 5,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 6,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 7,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 8,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 9,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 10,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 11,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 12,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 13,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 14,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 15,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 16,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 17,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 18,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 19,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 20,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-  {
-    _id: 21,
-    text:'h',
-    createdAt: new Date(),
-    user: {
-      _id: 2,
-      name: 'Mammy',
-      avatar: 'https://placeimg.com/140/140/any',
-    }
-  },
-]
