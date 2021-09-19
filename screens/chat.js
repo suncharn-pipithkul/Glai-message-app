@@ -151,16 +151,7 @@ export default function ChatScreen({ navigation, route }) {
 
                     await firestore().collection('Rooms').doc(rid).set({
                       recentMessage: {
-                        mid: recentMessage.mid,
-                        text: recentMessage.text,
-                        createdAt: recentMessage.createdAt,
-                        modifiedAt: recentMessage.modifiedAt,
-                        readBy: recentMessage.readBy,
-                        sender: {
-                          _id: recentMessage.sender._id,
-                          name: recentMessage.sender.name, 
-                          avatar: recentMessage.sender.avatar
-                        }
+                        ...recentMessage,
                       }
                     }, {merge: true});
                   } catch(err) {
