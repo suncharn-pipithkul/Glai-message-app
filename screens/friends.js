@@ -168,7 +168,7 @@ export default function FriendsScreen({ navigation }) {
                         mid: null,
                         sender: null,
                         text: null,
-                        sendAt: null,
+                        createdAt: null,
                         modifiedAt: null,
                         readBy: [],
                     },

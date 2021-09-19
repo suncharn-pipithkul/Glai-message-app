@@ -1,5 +1,5 @@
-import React, { useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, FlatList, TextInput, TouchableHighlight, Image, Alert } from 'react-native';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { StyleSheet, View, Text, FlatList, TextInput, TouchableHighlight, Image, Alert, ActivityIndicator } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { Container, Card, UserImg
@@ -9,6 +9,9 @@ import { Container, Card, UserImg
 from '../styleComponents/MessagesStyles';
 
 import { useHeaderHeight } from '@react-navigation/elements';
+
+// Storage import(s)
+import firestore from '@react-native-firebase/firestore';
 
 // Context
 import { AuthContext } from '../context/AuthContext';
@@ -32,6 +35,7 @@ export default function MainScreen({ navigation }) {
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [data, setData] = useState(dataHolder);
+    const [dataOriginal, setDataOriginal] = useState(undefined);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
@@ -48,15 +52,61 @@ export default function MainScreen({ navigation }) {
         setData(newData);
     };
 
-    const UserAvatar = () => {
-        // console.log(user);
+    useEffect(() => {
+        setRefeshing(true);
 
+        const unsubscribe = firestore().collection('Rooms')
+                                        .orderBy('recentMessage.createdAt', 'desc') // sort room by most recentMessage
+                                        .onSnapshot(querySnapshot => {
+                                            const dataCards = querySnapshot.docs.map(docSnapshot => {
+                                                return ({
+                                                    rid: docSnapshot.id,
+                                                    ...docSnapshot.data(),
+                                                    createdAt: docSnapshot.data().createdAt?.toDate(),
+                                                    modifiedAt: docSnapshot.data().modifiedAt?.toDate(),
+
+                                                });
+                                            });
+
+                                            setDataOriginal(dataCards);
+                                        });
+
+        setRefeshing(false);
+
+        return () => unsubscribe();
+    }, []);
+
+    const UserAvatar = () => {
         return (
             <TouchableHighlight style={{height:50, width:50, borderRadius:40, marginLeft:8,}} onPress={() => navigation.navigate('Profile')}>
                 <Image 
                     style={{height:50, width:50, borderRadius:30}} 
                     source={profileImgUrl ? {uri:profileImgUrl} : require('../assets/profileImg/blank-profile-picture.png')}/>
             </TouchableHighlight>
+        );
+    }
+
+    if (refreshing) {
+        return (
+            <Container>
+                <Header
+                    statusBarProps={{
+                        animated: true,
+                         backgroundColor: '#2089DC'
+                    }}
+                    placement='left'
+                    leftComponent={UserAvatar()}
+                    centerComponent={{text:'Chats', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
+                    centerContainerStyle={{alignSelf:'center'}}
+                    containerStyle={{
+                        borderBottomWidth:0, 
+                        shadowOpacity: 0, // This is for ios
+                    }}
+                />
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ActivityIndicator size='large'/>
+                </View>
+            </Container>
         );
     }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { StyleSheet, useWindowDimensions, Text, View, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
-import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -59,24 +59,13 @@ export default function ChatScreen({ navigation, route }) {
     
     // Save new message to firestore on send button clicked
     const onSend = useCallback( async (messages = []) => {
-      const text = messages[0].text; // get the newest text
+      try {
+        const text = messages[0].text; // get the newest text
 
-      // Stored new message in firestore
-      await firestore().collection('Rooms').doc(rid).collection('messages').add({
-        text,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        modifiedAt: null,
-        readBy: [],
-        sender: {
-          _id: user.uid,
-          name: user.displayName, 
-          avatar: user.photoURL
-        }
-      });
-
-      // Stored recent message in firestore
-      await firestore().collection('Rooms').doc(rid).set({
-        recentMessage: {
+        // Stored new message in firestore
+        let recentMessageDoc = await firestore().collection('Rooms').doc(rid).collection('messages').doc();
+        recentMessageDoc.set({
+          mid: recentMessageDoc.id,
           text,
           createdAt: firestore.FieldValue.serverTimestamp(),
           modifiedAt: null,
@@ -86,9 +75,41 @@ export default function ChatScreen({ navigation, route }) {
             name: user.displayName, 
             avatar: user.photoURL
           }
-        }
-      }, {merge: true});
+        });
+  
+        // Stored recent message in firestore
+        await firestore().collection('Rooms').doc(rid).set({
+          recentMessage: {
+            mid: recentMessageDoc.id,
+            text,
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            modifiedAt: null,
+            readBy: [],
+            sender: {
+              _id: user.uid,
+              name: user.displayName, 
+              avatar: user.photoURL
+            }
+          }
+        }, {merge: true});
+      } catch(err) {
+        alert(err);
+        console.log('@onSend', err);
+      }
+      
     }, []);
+
+    // Function to get recentMessage object
+    const getRecentMessage = async () => {
+      const querySnapshot = await firestore().collection('Rooms')
+                        .doc(rid)
+                        .collection('messages')
+                        .orderBy('createdAt', 'desc')
+                        .limit(1)
+                        .get();
+      
+      return querySnapshot.docs[0].data();
+    };
 
     // Function longPress message
     const onLongPress = (context, message) => {
@@ -121,7 +142,32 @@ export default function ChatScreen({ navigation, route }) {
               { text: 'Cancel', style: 'cancel'}, // cancel button
               { // delete button
                 text: 'Delete',
-                onPress: () => messagesCollection.doc(message._id).delete(),
+                onPress: async () => {
+                  messagesCollection.doc(message._id).delete();
+
+                  // update recentMessage field
+                  try {
+                    const recentMessage = await getRecentMessage();
+
+                    await firestore().collection('Rooms').doc(rid).set({
+                      recentMessage: {
+                        mid: recentMessage.mid,
+                        text: recentMessage.text,
+                        createdAt: recentMessage.createdAt,
+                        modifiedAt: recentMessage.modifiedAt,
+                        readBy: recentMessage.readBy,
+                        sender: {
+                          _id: recentMessage.sender._id,
+                          name: recentMessage.sender.name, 
+                          avatar: recentMessage.sender.avatar
+                        }
+                      }
+                    }, {merge: true});
+                  } catch(err) {
+                    alert(err);
+                    console.log('@OnDeleted', err);
+                  }
+                }
               },
             ])
             break;
@@ -142,9 +188,9 @@ export default function ChatScreen({ navigation, route }) {
 
     const renderComposer = ( props ) => {
       return (
-        <TextInput 
+        <Composer 
           {...props}
-          style={{flex:1}}
+          // textInputStyle={}
         />
       );
     };
