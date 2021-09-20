@@ -36,6 +36,7 @@ export default function MainScreen({ navigation }) {
     const [searchText, setSearchText] = useState('');
     const [data, setData] = useState(dataHolder);
     const [dataOriginal, setDataOriginal] = useState(undefined);
+    const [dataFiltered, setDataFiltered] = useState(dataOriginal || undefined);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
@@ -44,12 +45,56 @@ export default function MainScreen({ navigation }) {
     }, [refreshing])
 
     const filterSearch = (text) => {
-        const newData = dataHolder.filter(item => {
+        const newData = dataOriginal.filter(item => {
             const itemData = `${item.userName.toUpperCase()}`;
             return itemData.indexOf(text.toUpperCase()) > -1;
         });
 
-        setData(newData);
+        dataFiltered(newData);
+    };
+
+    const formatDisplayMessage = (type, sender_id, sender_name, text) => {
+        if (sender_id === user.uid)
+            return `You: ${text}`;
+        else {
+            if (type === 1) {  // 1 on 1 chat room
+                return text;
+            } else { // group chats
+                return `${sender_name}: ${text}`;
+            }
+        }
+    }
+
+    const getRoomPhotoUrl = async (type, members) => {
+        try {
+            if (type === 1) { // 1 on 1 chat room
+                for (const uid of members) {
+                    if (user.uid !== uid) { // found the user image for the room
+                        // return {uri: (await firestore().collection('Users').doc(uid).get()).get('photoURL')};
+
+                        const result = (await firestore().collection('Users')
+                                                        .doc(uid)
+                                                        .get()).get('photoURL');
+                        // console.log(result);
+                        return result;
+                    }
+                }
+            } else {
+                const images = [];
+                for (const uid of members) {
+                    if (user.uid !== uid) { // found the user image for the room
+                        
+                    }
+                }
+            }
+            
+            // return default photo if nothing found
+            return null;
+
+        } catch(err) {
+            alert(err);
+            console.log('@getRoomPhotoUrl', err);
+        }
     };
 
     useEffect(() => {
@@ -58,17 +103,60 @@ export default function MainScreen({ navigation }) {
         const unsubscribe = firestore().collection('Rooms')
                                         .orderBy('recentMessage.createdAt', 'desc') // sort room by most recentMessage
                                         .onSnapshot(querySnapshot => {
-                                            const dataCards = querySnapshot.docs.map(docSnapshot => {
+                                            let dataCards = querySnapshot.docs.map(docSnapshot => {
                                                 return ({
                                                     rid: docSnapshot.id,
                                                     ...docSnapshot.data(),
                                                     createdAt: docSnapshot.data().createdAt?.toDate(),
                                                     modifiedAt: docSnapshot.data().modifiedAt?.toDate(),
-
-                                                });
+                                                    recentMessage: {
+                                                        ...docSnapshot.data().recentMessage,
+                                                        createdAt: docSnapshot.data().recentMessage.createdAt?.toDate(),
+                                                        modifiedAt: docSnapshot.data().recentMessage.modifiedAt?.toDate(),
+                                                    }
+                                                }); 
                                             });
 
+                                            // remove card that doesn't have recentMessage
+                                            dataCards = dataCards.filter(card => card.recentMessage.createdAt);
+
+                                            for (const element of dataCards) {
+                                                try {
+                                                    if (element.type === 1) { // 1 on 1 chat room
+                                                        for (const uid of element.members) {
+                                                            if (user.uid !== uid) { // found the user image for the room
+                                                                firestore().collection('Users')
+                                                                            .doc(uid)
+                                                                            .get()
+                                                                            .then(doc => {
+                                                                                // console.log('logging: ', doc.data().photoURL);
+                                                                                element.roomPhotoUrl = doc.data().photoURL;
+                                                                            });
+                                                            }
+                                                        }
+                                                    } else if (element.type === 2){
+                                                        const images = [];
+                                                        for (const uid of members) {
+                                                            if (user.uid !== uid) { // found the user image for the room
+                                                                
+                                                            }
+                                                        }
+                                                    } else {
+                                                        // return default photo if nothing found
+                                                        element.roomPhotoUrl = null;
+                                                    }
+                                                    
+                                        
+                                                } catch(err) {
+                                                    alert(err);
+                                                    console.log('@getRoomPhotoUrl', err);
+                                                }
+                                            }
+
+                                            console.log('dataCards => ', dataCards);
+
                                             setDataOriginal(dataCards);
+                                            setDataFiltered(dataCards);
                                         });
 
         setRefeshing(false);
@@ -128,8 +216,8 @@ export default function MainScreen({ navigation }) {
             />
             <FlatList
                 keyboardShouldPersistTaps='handled'
-                data={data}
-                keyExtractor={item => item.id}
+                data={dataFiltered}
+                keyExtractor={item => item.rid}
                 ListHeaderComponent={
                     <SearchBar 
                         onChangeText={text => {
@@ -137,8 +225,8 @@ export default function MainScreen({ navigation }) {
                             setSearchText(text);
                         }} 
                         onClear={() => {
-                            setData(dataHolder);
                             setSearchText('');
+                            setDataFiltered(dataOriginal);
                         }} />
                 }
 
@@ -149,17 +237,29 @@ export default function MainScreen({ navigation }) {
                     <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
                         <UserInfo>
                             <UserImgWrapper>
-                                <UserImg source={item.userImg}/>
+                                {/* <UserImg source={item.roomPhotoUrl ?
+                                                    {uri:item.roomPhotoUrl}
+                                                    : require('../assets/profileImg/blank-profile-picture.png')} // default user image
+                                /> */}
+                                <UserImg source={item.roomPhotoUrl ?
+                                                    {uri: item.roomPhotoUrl}
+                                                    : require('../assets/profileImg/blank-profile-picture.png')} // default user image
+                                />
                             </UserImgWrapper>
 
                             <MainTextWrapper>
                                 <TopTextWrapper>
-                                    <UserName numberOfLines={1}>{item.userName}</UserName>
-                                    <SendAtText>{item.sendAt}</SendAtText>
+                                    <UserName numberOfLines={1}>{user.displayName}</UserName>
+                                    <SendAtText numberOfLines={1}>{item.recentMessage.createdAt?.toString()}</SendAtText>
                                 </TopTextWrapper>
 
                                 <BottomTextWrapper>
-                                    <MessageText numberOfLines={1}>{item.recentMessage}</MessageText>
+                                    <MessageText numberOfLines={1}>{ formatDisplayMessage(item.type, 
+                                                                                        item.recentMessage?.sender._id,
+                                                                                        item.recentMessage?.sender.name,
+                                                                                        item.recentMessage?.text)}
+                                    </MessageText>
+                                    {/* <MessageText numberOfLines={1}>{item.recentMessage ? 'recent' : ''}</MessageText> */}
                                 </BottomTextWrapper>
                             </MainTextWrapper>
                         </UserInfo>

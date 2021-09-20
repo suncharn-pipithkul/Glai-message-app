@@ -160,9 +160,10 @@ export default function FriendsScreen({ navigation }) {
                     rid: roomDoc.id,
                     createdBy: user.uid,
                     createdAt: firestore.FieldValue.serverTimestamp(),
-                    modifiedAt: firestore.FieldValue.serverTimestamp(),
+                    modifiedAt: null,
                     type: 1, // 1-1 chat
-                    name: null, // name of the room
+                    name: null,
+                    roomPhotoUrl: null,
                     members: [user.uid, item.uid],
                     recentMessage: {
                         mid: null,
