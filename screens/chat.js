@@ -5,10 +5,13 @@ import {
   useWindowDimensions, 
   TouchableOpacity, 
   View, 
+  Text,
   Alert } from 'react-native';
 import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
 import { 
   FooterContainer,
   FooterText,
@@ -25,15 +28,16 @@ import { globalStyles } from '../styles/globalStyles';
 
 
 export default function ChatScreen({ navigation, route }) {
-    const window = useWindowDimensions();
-    const { rid, otherUser } = route.params;
-
-    const { user } = useContext(AuthContext);
-    const [messages, setMessages] = useState([]);
-    const [isTyping, setIsTyping] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingMessage, setEditingMessage] = useState('');
-
+  
+  const window = useWindowDimensions();
+  const { rid, otherUser } = route.params;
+  
+  const { user } = useContext(AuthContext);
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingMessage, setEditingMessage] = useState('');
+  
     // Load messages for this room from firestore
     useEffect(() => {
       const messagesCollectionSorted = firestore().collection('Rooms')
@@ -71,26 +75,12 @@ export default function ChatScreen({ navigation, route }) {
     // Save new message to firestore on send button clicked
     const onSend = useCallback( async (messages = []) => {
       try {
-        const text = messages[0].text; // get the newest text
+        // if (!isEditing) {
+          const text = messages[0].text; // get the newest text
 
-        // Stored new message in firestore
-        let recentMessageDoc = await firestore().collection('Rooms').doc(rid).collection('messages').doc();
-        recentMessageDoc.set({
-          mid: recentMessageDoc.id,
-          text,
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          modifiedAt: null,
-          readBy: [],
-          sender: {
-            _id: user.uid,
-            name: user.displayName, 
-            avatar: user.photoURL
-          }
-        });
-  
-        // Stored recent message in firestore
-        await firestore().collection('Rooms').doc(rid).set({
-          recentMessage: {
+          // Stored new message in firestore
+          let recentMessageDoc = await firestore().collection('Rooms').doc(rid).collection('messages').doc();
+          recentMessageDoc.set({
             mid: recentMessageDoc.id,
             text,
             createdAt: firestore.FieldValue.serverTimestamp(),
@@ -101,8 +91,30 @@ export default function ChatScreen({ navigation, route }) {
               name: user.displayName, 
               avatar: user.photoURL
             }
-          }
-        }, {merge: true});
+          });
+    
+          // Stored recent message in firestore
+          await firestore().collection('Rooms').doc(rid).set({
+            recentMessage: {
+              mid: recentMessageDoc.id,
+              text,
+              createdAt: firestore.FieldValue.serverTimestamp(),
+              modifiedAt: null,
+              readBy: [],
+              sender: {
+                _id: user.uid,
+                name: user.displayName, 
+                avatar: user.photoURL
+              }
+            }
+          }, {merge: true});
+        // } else {
+        //   await messagesCollection.doc(message._id).update({
+        //     text: messages[0].text,
+        //     modifiedAt: firestore.FieldValue.serverTimestamp(),
+        //   });
+        // }
+        
       } catch(err) {
         alert(err);
         console.log('@onSend', err);
@@ -195,16 +207,32 @@ export default function ChatScreen({ navigation, route }) {
       return (
         <Composer 
           {...props}
-          defaultValue={editingMessage}
-          // textInputStyle={}
+          text={editingMessage}
+          onTextChanged={text => setEditingMessage(text)}
+          // textInputProps={{value:editingMessage}}
         />
+      );
+    };
+
+    const renderSend = ( props ) => {
+      return (
+        <Send 
+          {...props} 
+          containerStyle={{justifyContent:'center', marginLeft:6, marginRight:16}}
+          text={editingMessage}
+        >
+          <Ionicons name='md-send' size={24} color='#2089dc'/>
+        </Send>
+
+        // <Send {...props}>
+        // </Send>
       );
     };
 
     const renderFooter = () => {
       if (isEditing) {
         return (
-          <FooterContainer>
+          <View style={{flexDirection:'row', alignItems:'center', backgroundColor:'#002089dc'}}>
             <TouchableOpacity onPress={() => {
                 setIsEditing(false);
                 setEditingMessage('');
@@ -212,7 +240,7 @@ export default function ChatScreen({ navigation, route }) {
               <LeftFooterIcon name='cancel' size={24} color='white'/>
             </TouchableOpacity>
             <FooterText>Editing Message...</FooterText>
-          </FooterContainer>
+          </View>
         );
       }
       return null;
@@ -223,16 +251,6 @@ export default function ChatScreen({ navigation, route }) {
         <View>
           <Ionicons name='md-arrow-down' size={24} color='#2089dc'/>
         </View>
-      );
-    };
-
-    const renderSend = ( props ) => {
-      return (
-        <Send {...props}>
-          {/* <View style={{backgroundColor:'yellowgreen'}}>
-            <Ionicons name='md-send' size={24} color='#2089dc'/>
-          </View> */}
-        </Send>
       );
     };
 
@@ -263,7 +281,7 @@ export default function ChatScreen({ navigation, route }) {
               name: user.displayName,
               avatar: user.photoURL,
           }}
-          isTyping={isTyping}
+          // isTyping={isTyping}
           alwaysShowSend
           scrollToBottom
           onLongPress={onLongPress} // long press message bubble

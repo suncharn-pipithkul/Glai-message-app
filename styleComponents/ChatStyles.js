@@ -13,7 +13,7 @@ export const FooterContainer = styled.View`
 `;
 
 export const LeftFooterIcon = styled(MaterialIcons)`
-margin: 10px 10px 10px 15px;  /* top right bottom left */
+padding: 10px 10px 10px 15px;  /* top right bottom left */
 /* background-color: yellowgreen; */
 `;
 
