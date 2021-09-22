@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { StyleSheet, useWindowDimensions, Text, View, Alert } from 'react-native';
+import { StyleSheet, useWindowDimensions, TouchableOpacity, View, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { 
+  FooterContainer,
+  FooterText,
+  LeftFooterIcon, } from '../styleComponents/ChatStyles';
 
 // Storage import(s)
 import firestore from '@react-native-firebase/firestore';
@@ -13,16 +17,17 @@ import { AuthContext } from '../context/AuthContext';
 
 // styles
 import { globalStyles } from '../styles/globalStyles';
-import { TextInput } from 'react-native-gesture-handler';
 
 
 export default function ChatScreen({ navigation, route }) {
     const window = useWindowDimensions();
-    const { rid } = route.params;
+    const { rid, otherUser } = route.params;
 
     const { user } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
-    const [isTyping, setIsTyping] = useState(false);
+    const [isTyping, setIsTyping] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingMessage, setEditingMessage] = useState('');
 
     // Load messages for this room from firestore
     useEffect(() => {
@@ -130,10 +135,12 @@ export default function ChatScreen({ navigation, route }) {
       }, async (buttonIndex) => {
         switch (buttonIndex) {
           case 0: // edit
-            await messagesCollection.doc(message._id).update({
-              text: 'good',
-              modifiedAt: firestore.FieldValue.serverTimestamp(),
-            });
+            setIsEditing(true);
+            setEditingMessage(message.text);
+            // await messagesCollection.doc(message._id).update({
+            //   text: 'edited',
+            //   modifiedAt: firestore.FieldValue.serverTimestamp(),
+            // });
             break;
           case 1: // copy text
             Clipboard.setString(message.text);
@@ -182,9 +189,27 @@ export default function ChatScreen({ navigation, route }) {
       return (
         <Composer 
           {...props}
+          defaultValue={editingMessage}
           // textInputStyle={}
         />
       );
+    };
+
+    const renderFooter = () => {
+      if (isEditing) {
+        return (
+          <FooterContainer>
+            <TouchableOpacity onPress={() => {
+                setIsEditing(false);
+                setEditingMessage('');
+              }}>
+              <LeftFooterIcon name='cancel' size={24} color='white'/>
+            </TouchableOpacity>
+            <FooterText>Editing Message...</FooterText>
+          </FooterContainer>
+        );
+      }
+      return null;
     };
 
     const scrollToBottomComponent = () => {
@@ -232,12 +257,14 @@ export default function ChatScreen({ navigation, route }) {
               name: user.displayName,
               avatar: user.photoURL,
           }}
+          isTyping={isTyping}
           alwaysShowSend
           scrollToBottom
           onLongPress={onLongPress} // long press message bubble
           renderBubble={renderBubble}
           renderSend={renderSend}
           renderInputToolbar={renderInputToolbar}
+          renderFooter={renderFooter}
           scrollToBottomComponent={scrollToBottomComponent}
           scrollToBottomStyle={{
             position: 'absolute',
