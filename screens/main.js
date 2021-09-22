@@ -59,7 +59,12 @@ export default function MainScreen({ navigation }) {
                 return `${sender_name}: ${text}`;
             }
         }
-    }
+    };
+
+    // Function to format how recent message time is displayed in each card
+    const formatDisplayTime = (dateTime) => {
+        return dateTime?.toString();
+    };
 
     // attach listener for any changes in firestore Rooms (new messages, create/delete rooms)
     useEffect(() => {
@@ -241,7 +246,7 @@ export default function MainScreen({ navigation }) {
                             <MainTextWrapper>
                                 <TopTextWrapper>
                                     <UserName numberOfLines={1}>{item.name}</UserName>
-                                    <SendAtText numberOfLines={1}>{item.recentMessage.createdAt?.toString()}</SendAtText>
+                                    <SendAtText numberOfLines={1}>{formatDisplayTime(item.recentMessage.createdAt)}</SendAtText>
                                 </TopTextWrapper>
 
                                 <BottomTextWrapper>

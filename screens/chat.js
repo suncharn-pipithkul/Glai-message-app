@@ -26,33 +26,34 @@ export default function ChatScreen({ navigation, route }) {
 
     // Load messages for this room from firestore
     useEffect(() => {
-      const messagesListener = firestore().collection('Rooms')
-                                          .doc(rid)
-                                          .collection('messages')
-                                          .orderBy('createdAt', 'desc')
-                                          .onSnapshot(querySnapshot => {
-                                            const newMessages = querySnapshot.docs.map(doc => {
-                                              const firebaseData = doc.data();
+      const messagesCollectionSorted = firestore().collection('Rooms')
+                                                  .doc(rid)
+                                                  .collection('messages')
+                                                  .orderBy('createdAt', 'desc');
+      const messagesListener = messagesCollectionSorted
+                                  .onSnapshot(querySnapshot => {
+                                    const newMessages = querySnapshot.docs.map(doc => {
+                                      const firebaseData = doc.data();
 
-                                              const data = {
-                                                _id: doc.id, // message id for Gifted chat
-                                                text: '',
-                                                ...firebaseData,
-                                                createdAt: firebaseData.createdAt?.toDate(),
-                                              };
+                                      const data = {
+                                        _id: doc.id, // message id for Gifted chat
+                                        text: '',
+                                        ...firebaseData,
+                                        createdAt: firebaseData.createdAt?.toDate(),
+                                      };
 
-                                              if (!firebaseData.system) {
-                                                data.user = { // Gifted chat stored sender as user
-                                                  ...firebaseData.sender,
-                                                  name: firebaseData.sender.name
-                                                };
-                                              }
+                                      if (!firebaseData.system) {
+                                        data.user = { // Gifted chat stored sender as user
+                                          ...firebaseData.sender,
+                                          name: firebaseData.sender.name
+                                        };
+                                      }
 
-                                              return data;
-                                            });
+                                      return data;
+                                    });
 
-                                            setMessages(newMessages);
-                                          });
+                                    setMessages(newMessages);
+                                  });
       
       return () => messagesListener(); // cleanup listener
     }, []);
