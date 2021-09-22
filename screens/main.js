@@ -118,7 +118,7 @@ export default function MainScreen({ navigation }) {
         return () => unsub();
     }, []);
 
-    //  join 2 states into 1 object for Flatlist
+    //  join 2 async states retrieve from firestore into 1 object for Flatlist
     useEffect(() => {
         let newData = {};
 
@@ -128,7 +128,9 @@ export default function MainScreen({ navigation }) {
                 if (room.type === 1) { // 1-1 chat room, get 1 other user photo
                     const selectedMemberUid = room.members.find(member_uid => member_uid !== user.uid);
                     room.roomPhotoUrl = users.find(obj => obj.uid === selectedMemberUid).photoURL;
-                    room.name = users.find(obj => obj.uid === selectedMemberUid).displayName;
+                    if (!room.name)
+                        room.name = users.find(obj => obj.uid === selectedMemberUid).displayName;
+                        
                 } else if (room.type === 2) { // group room, get 2 users photos
                     room.roomPhotoUrl = undefined; // TODO add multiphotos
                     room.name = 'default';
@@ -212,9 +214,7 @@ export default function MainScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                renderItem={({ item }) => {
-                    // console.log('@Render 3', item.roomPhotoUrl);
-                    return (
+                renderItem={({ item }) => (
                     <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
                         <UserInfo>
                             <UserImgWrapper>
@@ -241,7 +241,7 @@ export default function MainScreen({ navigation }) {
                             </MainTextWrapper>
                         </UserInfo>
                     </Card>
-                )}}
+                )}
             />
         </Container>
     );
