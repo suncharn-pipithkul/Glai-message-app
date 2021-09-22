@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { StyleSheet, useWindowDimensions, TouchableOpacity, View, Alert } from 'react-native';
-import { Button } from 'react-native-elements';
+import { 
+  StyleSheet, 
+  Keyboard, 
+  useWindowDimensions, 
+  TouchableOpacity, 
+  View, 
+  Alert } from 'react-native';
 import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -119,6 +124,7 @@ export default function ChatScreen({ navigation, route }) {
 
     // Function longPress message
     const onLongPress = (context, message) => {
+      Keyboard.dismiss();
       let messagesCollection = firestore().collection('Rooms').doc(rid).collection('messages');
       let options = ['Copy Text', 'Cancel'];
       let cancelButtonIndex = 1;
