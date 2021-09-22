@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { StyleSheet, View, Text, FlatList, TextInput, TouchableHighlight, Image, Alert, ActivityIndicator } from 'react-native';
 import { Button, Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
@@ -27,6 +27,8 @@ const textDisplayFormat = (text) => {
     return `${text.trim().substr(0, MAX_LENGTH)}...`
 };
 
+console.log('===================================');
+
 export default function MainScreen({ navigation }) {
     const { user } = useContext(AuthContext);
     const dataHolder = example;
@@ -35,8 +37,9 @@ export default function MainScreen({ navigation }) {
     const [refreshing, setRefeshing] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [data, setData] = useState(dataHolder);
+    const [dataMiddle, setDataMiddle] = useState(undefined);
     const [dataOriginal, setDataOriginal] = useState(undefined);
-    const [dataFiltered, setDataFiltered] = useState(dataOriginal || undefined);
+    const [dataFiltered, setDataFiltered] = useState(undefined);
     const [profileImgUrl, setProfileImgUrl] = useState(user?.photoURL || undefined);
 
     const onRefresh = useCallback( async () => {
@@ -100,68 +103,82 @@ export default function MainScreen({ navigation }) {
     useEffect(() => {
         setRefeshing(true);
 
-        const unsubscribe = firestore().collection('Rooms')
-                                        .orderBy('recentMessage.createdAt', 'desc') // sort room by most recentMessage
-                                        .onSnapshot(querySnapshot => {
-                                            let dataCards = querySnapshot.docs.map(docSnapshot => {
-                                                return ({
-                                                    rid: docSnapshot.id,
-                                                    ...docSnapshot.data(),
-                                                    createdAt: docSnapshot.data().createdAt?.toDate(),
-                                                    modifiedAt: docSnapshot.data().modifiedAt?.toDate(),
-                                                    recentMessage: {
-                                                        ...docSnapshot.data().recentMessage,
-                                                        createdAt: docSnapshot.data().recentMessage.createdAt?.toDate(),
-                                                        modifiedAt: docSnapshot.data().recentMessage.modifiedAt?.toDate(),
-                                                    }
-                                                }); 
-                                            });
+        const roomsCollectionSorted = firestore().collection('Rooms')
+                                            .orderBy('recentMessage.createdAt', 'desc'); // sort room by most recent messages
+        const unsub = roomsCollectionSorted
+                        .onSnapshot(querySnapshot => {
+                            let dataCards = querySnapshot.docs.map(docSnapshot => {
+                                return {
+                                    rid: docSnapshot.id,
+                                    ...docSnapshot.data(),
+                                    createdAt: docSnapshot.data().createdAt?.toDate(),
+                                    modifiedAt: docSnapshot.data().modifiedAt?.toDate(),
+                                    recentMessage: {
+                                        ...docSnapshot.data().recentMessage,
+                                        createdAt: docSnapshot.data().recentMessage.createdAt?.toDate(),
+                                        modifiedAt: docSnapshot.data().recentMessage.modifiedAt?.toDate(),
+                                    }
+                                };
+                            });
 
-                                            // remove card that doesn't have recentMessage
-                                            dataCards = dataCards.filter(card => card.recentMessage.createdAt);
+                            // remove card that doesn't have recentMessage
+                            dataCards = dataCards.filter(card => card.recentMessage.createdAt);
 
-                                            for (const element of dataCards) {
-                                                try {
-                                                    if (element.type === 1) { // 1 on 1 chat room
-                                                        for (const uid of element.members) {
-                                                            if (user.uid !== uid) { // found the user image for the room
-                                                                firestore().collection('Users')
-                                                                            .doc(uid)
-                                                                            .get()
-                                                                            .then(doc => {
-                                                                                // console.log('logging: ', doc.data().photoURL);
-                                                                                element.roomPhotoUrl = doc.data().photoURL;
-                                                                            });
-                                                            }
-                                                        }
-                                                    } else if (element.type === 2){
-                                                        const images = [];
-                                                        for (const uid of members) {
-                                                            if (user.uid !== uid) { // found the user image for the room
-                                                                
-                                                            }
-                                                        }
-                                                    } else {
-                                                        // return default photo if nothing found
-                                                        element.roomPhotoUrl = null;
-                                                    }
-                                                    
-                                        
-                                                } catch(err) {
-                                                    alert(err);
-                                                    console.log('@getRoomPhotoUrl', err);
-                                                }
-                                            }
+                            console.log('@RoomsSnapshot 1', dataCards[0].roomPhotoUrl);
 
-                                            console.log('dataCards => ', dataCards);
-
-                                            setDataOriginal(dataCards);
-                                            setDataFiltered(dataCards);
-                                        });
+                            console.log('@RoomsSnapshot dataCards 1 => ', dataCards);
+                            // setDataOriginal(dataCards);
+                             // setDataFiltered(dataCards);
+                            setDataMiddle(dataCards);
+                            console.log('@RoomsSnapshot dataCards 2 => ', dataCards);
+                        });
 
         setRefeshing(false);
 
-        return () => unsubscribe();
+        return () => unsub();
+    }, []);
+
+    useEffect(() => {
+        setRefeshing(true);
+
+        const usersCollection = firestore().collection('Users');
+        const unsub = usersCollection
+                        .onSnapshot(querySnapshot => {
+                            if (dataMiddle) {
+                                let dataCards = dataMiddle;
+
+                                let usersData = querySnapshot.docs.map(docSnapshot => {
+                                    return {
+                                        ...docSnapshot.data()
+                                    }
+                                });
+
+                                for (const card of dataCards) {
+                                    // find the member that is not current user
+                                    if (card.type === 1) { // 1-1 chat room => roomPhoto = other user photo
+                                        for (const uid of card.members) {
+                                            if (user.uid !== uid) {
+                                                console.log('@UsersSnapshot 2', card.roomPhotoUrl);
+                                                card.roomPhotoUrl = usersData.find(obj => obj.uid === uid)?.photoURL;
+                                                console.log('@UsersSnapshot 3', card.roomPhotoUrl);
+                                            }
+                                        }
+                                    } else if (card.type === 2) { // Group chat room => roomPhoto = 2 other users photos
+                                        card.roomPhotoUrl = null;
+                                    } else {
+                                        card.roomPhotoUrl = null;
+                                    }
+                                }
+                                                
+                                console.log('@UsersSnapshot dataCards 3 => ', dataCards);
+                                setDataOriginal(dataCards);
+                                setDataFiltered(dataCards);
+                            }
+                        });
+
+
+        setRefeshing(false);
+        return () => unsub();
     }, []);
 
     const UserAvatar = () => {
@@ -233,7 +250,9 @@ export default function MainScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                renderItem={({ item }) => (
+                renderItem={({ item }) => {
+                    console.log('@Render 3', item.roomPhotoUrl);
+                    return (
                     <Card activeOpacity={0.5} onPress={() => navigation.navigate('Chat', {userName: item.userName})}>
                         <UserInfo>
                             <UserImgWrapper>
@@ -264,7 +283,7 @@ export default function MainScreen({ navigation }) {
                             </MainTextWrapper>
                         </UserInfo>
                     </Card>
-                )}
+                )}}
             />
         </Container>
     );
