@@ -1,14 +1,29 @@
-import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
-import { StyleSheet, View, Text, FlatList, TextInput, TouchableHighlight, Image, Alert, ActivityIndicator } from 'react-native';
-import { Button, Header } from 'react-native-elements';
-import { SearchBar } from '../components/Searchbar';
-import { Container, Card, UserImg
-    , UserImgWrapper, UserInfo, UserName, MessageText
-    , SendAtText, MainTextWrapper, TopTextWrapper
-    , BottomTextWrapper } 
-from '../styleComponents/MessagesStyles';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 
-import { useHeaderHeight } from '@react-navigation/elements';
+// Components import(s)
+import { 
+    View, 
+    FlatList, 
+    TouchableHighlight, 
+    Image, 
+    ActivityIndicator } from 'react-native';
+import { Header } from 'react-native-elements';
+import { SearchBar } from '../components/Searchbar';
+import { 
+    Container, 
+    Card, 
+    UserImg, 
+    UserImgWrapper, 
+    UserInfo, 
+    UserName, 
+    MessageText, 
+    SendAtText, 
+    MainTextWrapper, 
+    TopTextWrapper, 
+    BottomTextWrapper } from '../styleComponents/MessagesStyles';
+
+// Utility import(s)
+import moment from 'moment';
 
 // Storage import(s)
 import firestore from '@react-native-firebase/firestore';
@@ -16,10 +31,6 @@ import firestore from '@react-native-firebase/firestore';
 // Context
 import { AuthContext } from '../context/AuthContext';
 
-// styles
-import { globalStyles } from '../styles/globalStyles';
-
-console.log('===================================');
 
 export default function MainScreen({ navigation }) {
     const { user } = useContext(AuthContext);
@@ -63,7 +74,18 @@ export default function MainScreen({ navigation }) {
 
     // Function to format how recent message time is displayed in each card
     const formatDisplayTime = (dateTime) => {
-        return dateTime?.toString();
+        const now = moment();
+        const msgTime = moment(dateTime);
+        
+        if (now.isSame(msgTime, 'day')) { // same day
+            return msgTime.format('h:mm A');
+        } else if (now.isoWeek() == msgTime.isoWeek()) { // same week
+            return msgTime.format('ddd');
+        } else if (now.isSame(msgTime, 'year')) { // same year
+            return msgTime.format('D MMM');
+        } else {
+            return msgTime.format('D MMM yyyy');
+        }
     };
 
     // attach listener for any changes in firestore Rooms (new messages, create/delete rooms)

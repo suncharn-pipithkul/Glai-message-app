@@ -9,9 +9,7 @@ import {
     SectionList, 
     TouchableHighlight, 
     TouchableOpacity, 
-    StyleSheet,
-    Alert} 
-from 'react-native';
+    StyleSheet} from 'react-native';
 import { Header } from 'react-native-elements';
 import { SearchBar } from '../components/Searchbar';
 import { 
@@ -28,8 +26,7 @@ import {
     RightTagWrapper,
     TextAlignWrapper,
     SectionHeaderWrapper,
-    SectionHeader} 
-from '../styleComponents/MessagesStyles';
+    SectionHeader} from '../styleComponents/MessagesStyles';
 
 // Storage import(s)
 import firestore from '@react-native-firebase/firestore';
