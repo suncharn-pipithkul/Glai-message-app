@@ -160,10 +160,12 @@ export default function MainScreen({ navigation }) {
                         
                 } else if (room.type === 2) { // group room, get 2 users photos
                     room.roomPhotoUrl = undefined; // TODO add multiphotos
-                    room.name = 'default';
+                    if (!room.name)
+                        room.name = 'default';
                 } else { // else no room photo
                     room.roomPhotoUrl = undefined;
-                    room.name = 'error';
+                    if (!room.name)
+                        room.name = 'error';
                 }
             });
 
