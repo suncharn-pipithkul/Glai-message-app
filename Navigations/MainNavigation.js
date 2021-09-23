@@ -141,8 +141,8 @@ export default function MainNavigation() {
           component={MainScreen} 
           listeners={ ({ navigation }) => ({
             tabPress: e => {
-                if (isAddFriend)
-                  navigation.popToTop();
+                // if (isAddFriend)
+                //   navigation.popToTop();
                 
                 console.log('it happened!!');
             },
@@ -159,7 +159,10 @@ export default function MainNavigation() {
           <Stack.Screen 
             name='Chat' 
             component={ChatScreen}
-            options={({ route }) => ({title:route.params.userName})}/>
+            // options={({ route }) => ({title:route.params.userName})}/>
+            options={{
+              cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            }}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
       </Stack.Navigator>
     );

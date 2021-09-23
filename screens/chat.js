@@ -16,13 +16,14 @@ import {
   InputToolbar, 
   Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
+import { FooterText, LeftFooterIcon } from '../styleComponents/ChatStyles';
+import { Header } from 'react-native-elements';
+
+// Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
-import { 
-  FooterContainer,
-  FooterText,
-  LeftFooterIcon, } from '../styleComponents/ChatStyles';
 
 // Storage import(s)
 import firestore from '@react-native-firebase/firestore';
@@ -227,6 +228,7 @@ export default function ChatScreen({ navigation, route }) {
           {...props}
           // containerStyle={{borderRadius:30, marginLeft:5, marginRight:5}}
           // containerStyle={{backgroundColor:'red'}}
+          containerStyle={{justifyContent:'center', alignItems:'center'}}
           renderComposer={renderComposer}
         />
       );
@@ -300,7 +302,29 @@ export default function ChatScreen({ navigation, route }) {
       );
     };
 
+    const backArrow = () => {
+      return (
+          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.goBack()}}>
+              <Feather name='arrow-left' size={24} color='white'/>
+          </TouchableOpacity>
+      );
+    };
+
     return (
+      <View style={{flex:1}}>
+          <Header
+            placement='left'
+            leftComponent={backArrow()}
+            centerComponent={{text:'Chat', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
+            leftContainerStyle={{alignSelf:'center', marginHorizontal:12}}
+            centerContainerStyle={{alignSelf:'center', paddingTop:8, paddingBottom:10}}
+            rightContainerStyle={{alignSelf:'center'}}
+            containerStyle={{
+                backgroundColor: '#2089dc',
+                borderBottomWidth:0, 
+                shadowOpacity: 0, // This is for ios
+            }}
+          />
         <GiftedChat
           messages={messages}
           onSend={message => onSend(message)}
@@ -324,6 +348,7 @@ export default function ChatScreen({ navigation, route }) {
             left: window.width/2 - 20, // 20 is from default button width in giftedchat is 40 divide by 2
           }}
         />
+      </View>
     );
 }
 
