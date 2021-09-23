@@ -175,13 +175,13 @@ export default function MainScreen({ navigation }) {
 
     }, [rooms, users])
 
-    const handleCardPress = async (item) => {
+    const handleCardPress = async (room) => {
         try {
             // Get the room user clicked from firestore
             const roomsCollection = firestore().collection('Rooms');
-            const roomDoc = roomsCollection.doc(item.rid);
+            const roomDoc = roomsCollection.doc(room.rid);
 
-            navigation.navigate('Chat', {members: item.members, rid: roomDoc.id});
+            navigation.navigate('Chat', {members: room.members, rid: roomDoc.id, type: 1, roomName: room.name, roomPhotoUrl: room.roomPhotoUrl});
         } catch(err) {
             alert(err);
             console.log('@handleCardPress', err);

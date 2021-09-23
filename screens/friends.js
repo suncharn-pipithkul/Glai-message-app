@@ -128,7 +128,7 @@ export default function FriendsScreen({ navigation }) {
         setDataFiltered(newData);
     };
 
-    const handleCardPress = async (item) => {
+    const handleCardPress = async (otherUser) => {
         try {
             let roomExistId = undefined;
 
@@ -141,7 +141,7 @@ export default function FriendsScreen({ navigation }) {
             for (const rid of rooms) {
                 let curRoomDoc = roomsCollection.doc(rid);
                 let members = (await curRoomDoc.get()).get('members'); // all members for this room
-                if (_.isEqual(new Set(members), new Set([user.uid, item.uid]))) {
+                if (_.isEqual(new Set(members), new Set([user.uid, otherUser.uid]))) {
                     roomExistId = rid;
                     break;
                 }
@@ -161,7 +161,7 @@ export default function FriendsScreen({ navigation }) {
                     type: 1, // 1-1 chat
                     name: null,
                     roomPhotoUrl: null,
-                    members: [user.uid, item.uid],
+                    members: [user.uid, otherUser.uid],
                     recentMessage: {
                         mid: null,
                         sender: null,
@@ -179,14 +179,14 @@ export default function FriendsScreen({ navigation }) {
                 });
     
                 // Update other user's rooms
-                const otherUserDoc = usersCollection.doc(item.uid);
+                const otherUserDoc = usersCollection.doc(otherUser.uid);
                 await otherUserDoc.update({
                     rooms: firestore.FieldValue.arrayUnion(roomDoc.id),
                 });
             }
 
             // navigate to chat screen
-            navigation.navigate('Chat', {otherUser: item, rid: roomDoc.id});
+            navigation.navigate('Chat', {members: otherUser.members, rid: roomDoc.id, type: 1, roomName: otherUser.displayName, roomPhotoUrl: otherUser.photoURL});
         } catch(err) {
             alert(err);
             console.log('@handleCardPress', err);

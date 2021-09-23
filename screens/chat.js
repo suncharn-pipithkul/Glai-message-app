@@ -23,7 +23,6 @@ import { Header } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
 
 // Storage import(s)
 import firestore from '@react-native-firebase/firestore';
@@ -38,14 +37,14 @@ import { globalStyles } from '../styles/globalStyles';
 export default function ChatScreen({ navigation, route }) {
   
   const window = useWindowDimensions();
-  const { rid, members } = route.params;
+  const { rid, members, type } = route.params;
   
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editingMessage, setEditingMessage] = useState({text:'', _id:''});
-  
+
     // Load messages for this room from firestore
     useEffect(() => {
       const messagesCollectionSorted = firestore().collection('Rooms')
@@ -302,29 +301,8 @@ export default function ChatScreen({ navigation, route }) {
       );
     };
 
-    // const backArrow = () => {
-    //   return (
-    //       <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.goBack()}}>
-    //           <Feather name='arrow-left' size={24} color='white'/>
-    //       </TouchableOpacity>
-    //   );
-    // };
-
     return (
       <View style={{flex:1}}>
-          {/* <Header
-            placement='left'
-            leftComponent={backArrow()}
-            centerComponent={{text:'Chat', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
-            leftContainerStyle={{alignSelf:'center', marginHorizontal:12}}
-            centerContainerStyle={{alignSelf:'center', paddingTop:8, paddingBottom:10}}
-            rightContainerStyle={{alignSelf:'center'}}
-            containerStyle={{
-                backgroundColor: '#2089dc',
-                borderBottomWidth:0, 
-                shadowOpacity: 0, // This is for ios
-            }}
-          /> */}
         <GiftedChat
           messages={messages}
           onSend={message => onSend(message)}

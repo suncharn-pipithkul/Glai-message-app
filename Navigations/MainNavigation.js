@@ -5,6 +5,7 @@ import
   View,
   Button, 
   Image,
+  TouchableWithoutFeedback,
   TouchableHighlight,
   ActivityIndicator} from 'react-native';
 import { Avatar } from 'react-native-elements';
@@ -39,6 +40,7 @@ import ProfileScreen from '../screens/profile';
 import FriendsScreen from '../screens/friends';
 import AddFriendsScreen from '../screens/addFriend';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { HeaderBackButton } from '@react-navigation/elements';
 
 
 // const Stack = createNativeStackNavigator(); // Native Stack Navigator
@@ -152,6 +154,16 @@ export default function MainNavigation() {
     );
   };
 
+  const UserAvatar = ( photoURL ) => {
+    return (
+        <TouchableHighlight style={{height:40, width:40, borderRadius:40,}} onPress={() => navigation.navigate('Profile')}>
+            <Image 
+                style={{height:40, width:40, borderRadius:30}} 
+                source={photoURL ? {uri:photoURL} : require('../assets/profileImg/blank-profile-picture.png')}/>
+        </TouchableHighlight>
+    );
+}
+
   const AppStack = () => {
     return (
       <Stack.Navigator screenOptions={{headerShown:false}}>
@@ -160,8 +172,8 @@ export default function MainNavigation() {
             name='Chat' 
             component={ChatScreen}
             // options={({ route }) => ({title:route.params.userName})}/>
-            options={{
-              title: 'Chat',
+            options={({ route }) => ({
+              title: route.params.roomName ? route.params.roomName : 'Chat',
               headerShown:true,
               headerStyle: {
                 backgroundColor: '#2089dc',
@@ -172,8 +184,18 @@ export default function MainNavigation() {
                 color: 'white',
                 fontSize:24,
               },
+              headerLeft: (props) => (
+                <View style={{flexDirection:'row', alignItems:'center'}}>
+                  {props.canGoBack && <HeaderBackButton {...props} />}
+                  <TouchableWithoutFeedback>
+                    {UserAvatar(route.params.roomPhotoUrl)}
+                    {/* <Ionicons name='ios-thumbs-up-sharp' size={24} color='white'/> */}
+                  </TouchableWithoutFeedback>
+                </View>
+              ),
+              headerBackVisible:true,
               cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-            }}/>
+            })}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>
       </Stack.Navigator>
     );
