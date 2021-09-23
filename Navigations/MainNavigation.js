@@ -161,6 +161,17 @@ export default function MainNavigation() {
             component={ChatScreen}
             // options={({ route }) => ({title:route.params.userName})}/>
             options={{
+              title: 'Chat',
+              headerShown:true,
+              headerStyle: {
+                backgroundColor: '#2089dc',
+              },
+              headerTintColor: 'white',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize:24,
+              },
               cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
             }}/>
           <Stack.Screen name='Profile' component={ProfileScreen}/>

@@ -302,17 +302,17 @@ export default function ChatScreen({ navigation, route }) {
       );
     };
 
-    const backArrow = () => {
-      return (
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.goBack()}}>
-              <Feather name='arrow-left' size={24} color='white'/>
-          </TouchableOpacity>
-      );
-    };
+    // const backArrow = () => {
+    //   return (
+    //       <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.goBack()}}>
+    //           <Feather name='arrow-left' size={24} color='white'/>
+    //       </TouchableOpacity>
+    //   );
+    // };
 
     return (
       <View style={{flex:1}}>
-          <Header
+          {/* <Header
             placement='left'
             leftComponent={backArrow()}
             centerComponent={{text:'Chat', style:{fontSize:24, fontWeight:'bold', color:'#fff'}}}
@@ -324,7 +324,7 @@ export default function ChatScreen({ navigation, route }) {
                 borderBottomWidth:0, 
                 shadowOpacity: 0, // This is for ios
             }}
-          />
+          /> */}
         <GiftedChat
           messages={messages}
           onSend={message => onSend(message)}
