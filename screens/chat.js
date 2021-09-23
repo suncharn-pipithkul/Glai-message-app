@@ -310,7 +310,7 @@ export default function ChatScreen({ navigation, route }) {
               avatar: user.photoURL,
           }}
           // isTyping={isTyping}
-          alwaysShowSend
+          // alwaysShowSend
           scrollToBottom
           onLongPress={onLongPress} // long press message bubble
           renderBubble={renderBubble}
@@ -334,27 +334,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     fontSize: 16,
     backgroundColor: '#eee',
-    marginLeft: 10,
-    marginTop: 6,
-    marginBottom: 6,
-    paddingLeft: 16,
-    paddingTop: 4,
-    paddingBottom: 4,
-    // ...Platform.select({
-    //   web: {
-    //     paddingTop: 6,
-    //     paddingLeft: 4,
-    //   },
-    // }),
-    // marginTop: Platform.select({
-    //   ios: 6,
-    //   android: 0,
-    //   web: 6,
-    // }),
-    // marginBottom: Platform.select({
-    //   ios: 5,
-    //   android: 3,
-    //   web: 4,
-    // }),
+    marginVertical: 6,
+    marginHorizontal: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
   }
 });
