@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { 
+  Platform,
   StyleSheet, 
   Keyboard, 
   useWindowDimensions, 
@@ -7,7 +8,13 @@ import {
   View, 
   Text,
   Alert } from 'react-native';
-import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat'
+import { 
+  GiftedChat, 
+  Bubble, 
+  Send, 
+  Actions,
+  InputToolbar, 
+  Composer } from 'react-native-gifted-chat'
 import Clipboard from '@react-native-clipboard/clipboard';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,7 +37,7 @@ import { globalStyles } from '../styles/globalStyles';
 export default function ChatScreen({ navigation, route }) {
   
   const window = useWindowDimensions();
-  const { rid, otherUser } = route.params;
+  const { rid, members } = route.params;
   
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
@@ -90,7 +97,7 @@ export default function ChatScreen({ navigation, route }) {
               _id: user.uid,
               name: user.displayName, 
               avatar: user.photoURL
-            }
+            },
           });
     
           // Stored recent message in firestore
@@ -201,11 +208,25 @@ export default function ChatScreen({ navigation, route }) {
     };
 
     // Render Components
+    const renderActions = ( props ) => {
+      return (
+        <Actions
+          {...props}
+          options={{
+            ['Send Image']: handlePickImage,
+          }}
+        />
+      );
+    };
+
+    const handlePickImage = () => {};
+
     const renderInputToolbar = ( props ) => {
       return (
         <InputToolbar 
           {...props}
-          containerStyle={{borderRadius:30, marginLeft:5, marginRight:5}}
+          // containerStyle={{borderRadius:30, marginLeft:5, marginRight:5}}
+          // containerStyle={{backgroundColor:'red'}}
           renderComposer={renderComposer}
         />
       );
@@ -217,7 +238,7 @@ export default function ChatScreen({ navigation, route }) {
           {...props}
           text={editingMessage.text}
           onTextChanged={text => setEditingMessage({...editingMessage, text:text})}
-          // textInputProps={{value:editingMessage}}
+          textInputProps={{style:styles.textInput}}
         />
       );
     };
@@ -233,9 +254,6 @@ export default function ChatScreen({ navigation, route }) {
             <MaterialCommunityIcons name='pencil-circle' size={32} color='#2089dc'/>
             : <Ionicons name='md-send' size={24} color='#2089dc'/>}
         </Send>
-
-        // <Send {...props}>
-        // </Send>
       );
     };
 
@@ -296,9 +314,10 @@ export default function ChatScreen({ navigation, route }) {
           scrollToBottom
           onLongPress={onLongPress} // long press message bubble
           renderBubble={renderBubble}
-          renderSend={renderSend}
+          renderActions={renderActions}
           renderInputToolbar={renderInputToolbar}
           renderFooter={renderFooter}
+          renderSend={renderSend}
           scrollToBottomComponent={scrollToBottomComponent}
           scrollToBottomStyle={{
             position: 'absolute',
@@ -309,4 +328,33 @@ export default function ChatScreen({ navigation, route }) {
 }
 
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  textInput: {
+    flex: 1,
+    borderRadius: 24,
+    fontSize: 16,
+    backgroundColor: '#eee',
+    marginLeft: 10,
+    marginTop: 6,
+    marginBottom: 6,
+    paddingLeft: 16,
+    paddingTop: 4,
+    paddingBottom: 4,
+    // ...Platform.select({
+    //   web: {
+    //     paddingTop: 6,
+    //     paddingLeft: 4,
+    //   },
+    // }),
+    // marginTop: Platform.select({
+    //   ios: 6,
+    //   android: 0,
+    //   web: 6,
+    // }),
+    // marginBottom: Platform.select({
+    //   ios: 5,
+    //   android: 3,
+    //   web: 4,
+    // }),
+  }
+});

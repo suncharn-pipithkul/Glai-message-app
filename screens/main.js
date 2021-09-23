@@ -181,7 +181,7 @@ export default function MainScreen({ navigation }) {
             const roomsCollection = firestore().collection('Rooms');
             const roomDoc = roomsCollection.doc(item.rid);
 
-            navigation.navigate('Chat', {otherUser: item, rid: roomDoc.id});
+            navigation.navigate('Chat', {members: item.members, rid: roomDoc.id});
         } catch(err) {
             alert(err);
             console.log('@handleCardPress', err);
