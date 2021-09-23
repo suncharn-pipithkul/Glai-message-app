@@ -36,7 +36,7 @@ export default function ChatScreen({ navigation, route }) {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingMessage, setEditingMessage] = useState('');
+  const [editingMessage, setEditingMessage] = useState({text:'', _id:''});
   
     // Load messages for this room from firestore
     useEffect(() => {
@@ -73,9 +73,9 @@ export default function ChatScreen({ navigation, route }) {
     }, []);
     
     // Save new message to firestore on send button clicked
-    const onSend = useCallback( async (messages = []) => {
+    const onSend = async (messages = []) => {
       try {
-        // if (!isEditing) {
+        if (!isEditing) {
           const text = messages[0].text; // get the newest text
 
           // Stored new message in firestore
@@ -108,19 +108,31 @@ export default function ChatScreen({ navigation, route }) {
               }
             }
           }, {merge: true});
-        // } else {
-        //   await messagesCollection.doc(message._id).update({
-        //     text: messages[0].text,
-        //     modifiedAt: firestore.FieldValue.serverTimestamp(),
-        //   });
-        // }
+        } else {
+          // edit message
+          const messagesCollection = firestore().collection('Rooms').doc(rid).collection('messages');
+          await messagesCollection.doc(editingMessage._id).update({
+            text: messages[0].text,
+            modifiedAt: firestore.FieldValue.serverTimestamp(),
+          });
+
+          // update recentMessage field
+          const recentMessage = await getRecentMessage();
+          await firestore().collection('Rooms').doc(rid).set({
+            recentMessage: {
+              ...recentMessage,
+            }
+          }, {merge: true});
+
+          setIsEditing(false);
+        }
         
       } catch(err) {
         alert(err);
         console.log('@onSend', err);
       }
       
-    }, []);
+    };
 
     // Function to get recentMessage object
     const getRecentMessage = async () => {
@@ -154,11 +166,7 @@ export default function ChatScreen({ navigation, route }) {
         switch (buttonIndex) {
           case 0: // edit
             setIsEditing(true);
-            setEditingMessage(message.text);
-            // await messagesCollection.doc(message._id).update({
-            //   text: 'edited',
-            //   modifiedAt: firestore.FieldValue.serverTimestamp(),
-            // });
+            setEditingMessage({text:message.text, _id:message._id});
             break;
           case 1: // copy text
             Clipboard.setString(message.text);
@@ -207,8 +215,8 @@ export default function ChatScreen({ navigation, route }) {
       return (
         <Composer 
           {...props}
-          text={editingMessage}
-          onTextChanged={text => setEditingMessage(text)}
+          text={editingMessage.text}
+          onTextChanged={text => setEditingMessage({...editingMessage, text:text})}
           // textInputProps={{value:editingMessage}}
         />
       );
@@ -219,9 +227,11 @@ export default function ChatScreen({ navigation, route }) {
         <Send 
           {...props} 
           containerStyle={{justifyContent:'center', marginLeft:6, marginRight:16}}
-          text={editingMessage}
+          text={editingMessage.text}
         >
-          <Ionicons name='md-send' size={24} color='#2089dc'/>
+          {isEditing ? 
+            <MaterialCommunityIcons name='pencil-circle' size={32} color='#2089dc'/>
+            : <Ionicons name='md-send' size={24} color='#2089dc'/>}
         </Send>
 
         // <Send {...props}>
@@ -235,7 +245,7 @@ export default function ChatScreen({ navigation, route }) {
           <View style={{flexDirection:'row', alignItems:'center', backgroundColor:'#002089dc'}}>
             <TouchableOpacity onPress={() => {
                 setIsEditing(false);
-                setEditingMessage('');
+                setEditingMessage({text:'', _id:''});
               }}>
               <LeftFooterIcon name='cancel' size={24} color='white'/>
             </TouchableOpacity>
