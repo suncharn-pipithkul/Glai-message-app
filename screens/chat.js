@@ -133,6 +133,7 @@ export default function ChatScreen({ navigation, route }) {
 
           setIsEditing(false);
         }
+        setEditingMessage('');
         
       } catch(err) {
         alert(err);

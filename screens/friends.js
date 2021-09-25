@@ -90,7 +90,7 @@ export default function FriendsScreen({ navigation }) {
             setLoading(false);
         }
 
-        return () => subscriber();
+        // return () => subscriber();
     }, []);
 
     // States

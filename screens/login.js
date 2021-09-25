@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect,  useRef, useCallback, useContext } from 'react';
+import React, { useState, useEffect,  useRef, useCallback, useContext } from 'react';
 import { Text, View, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Input, Button, CheckBox, SocialIcon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -16,7 +16,7 @@ import { globalStyles } from '../styles/globalStyles';
 import { AuthContext } from '../context/AuthContext';
 
 
-export default function LoginScreen({ navigation }) {
+export function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState('');
@@ -41,33 +41,23 @@ export default function LoginScreen({ navigation }) {
     );
 
     // store data on toggle on/ emailpassword changed/ login pressed
-    const saveUserData = async () => {
-        saveData('@rememberMe', rememberMe);
-        saveData('@email', email);
-        saveData('@password', password);
-    };
+    const saveUserData = useCallback(async () => {
+            // save data in storage
+            const saveData = async (storageKey, data) => {
+                try {
+                    await AsyncStorage.setItem(storageKey, JSON.stringify(data));
+                } catch(err) {
+                    alert(err);
+                    console.log('Error @saveData: ', err);
+                }
+            };
 
-    // save data in storage
-    const saveData = async (storageKey, data) => {
-        try {
-            await AsyncStorage.setItem(storageKey, JSON.stringify(data));
-        } catch(err) {
-            alert(err);
-            console.log('Error @saveData: ', err);
-        }
-    };
-
-    // get stored bool value
-    const getCheck = async () => {
-        try {
-            const value = await AsyncStorage.getItem('@rememberMe');
-            return value === null ? null : value === 'true';
-        } catch(err) {
-            alert(err);
-            console.log('Error @getCheck: ', err);
-            return false;
-        }
-    };
+            saveData('@rememberMe', rememberMe);
+            saveData('@email', email);
+            saveData('@password', password);
+        },
+        [rememberMe, email, password]
+    );
 
     // retrieve stored data
     const getStoredData = async (storageKey) => {
@@ -95,6 +85,18 @@ export default function LoginScreen({ navigation }) {
 
     // get stored email password rememberMe on first render
     useEffect(() => {
+        // get stored bool value
+        const getCheck = async () => {
+            try {
+                const value = await AsyncStorage.getItem('@rememberMe');
+                return value === null ? null : value === 'true';
+            } catch(err) {
+                alert(err);
+                console.log('Error @getCheck: ', err);
+                return false;
+            }
+        };
+
         const asyncWrap = async () => {
             const check = await getCheck();
             if (check !== null) {
@@ -110,6 +112,7 @@ export default function LoginScreen({ navigation }) {
         };
         asyncWrap();
     }, []);
+
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -200,6 +203,5 @@ export default function LoginScreen({ navigation }) {
     );
 }
 
+export default React.memo(LoginScreen);
 
-
-const styles = StyleSheet.create({});

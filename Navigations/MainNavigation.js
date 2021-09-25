@@ -31,9 +31,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // screens
-import OnBoardScreen from '../screens/onBoard';
-import LoginScreen from '../screens/login';
-import RegisterScreen from '../screens/register';
+import AuthStack from './AuthNavigation';
 import MainScreen from '../screens/main';
 import ChatScreen from '../screens/chat';
 import ProfileScreen from '../screens/profile';
@@ -62,7 +60,7 @@ export default function MainNavigation() {
   const [bottomTabColor, setBottomTabColor] = useState('#2089dc');
 
   const {user, setUser} = useContext(AuthContext);
-  const {isAddFriend} = useContext(FriendStackContext);
+
 
   // function to check if user has seen the onboarding screen or not
   const checkOnboarding = async () => {
@@ -84,17 +82,6 @@ export default function MainNavigation() {
   const onAuthStateChanged = (user) => {
     setUser(user);
   }
-
-  // Stack Screen
-  const AuthStack = () => {
-    return (
-      <Stack.Navigator screenOptions={{headerShown:false}}>
-          {!viewedOnboarding && <Stack.Screen name='Onboard' component={OnBoardScreen} />}
-          <Stack.Screen name='Login' component={LoginScreen} />
-          <Stack.Screen name='Register' component={RegisterScreen} />
-      </Stack.Navigator>
-    );
-  };
 
   const FriendsStack = createStackNavigator();
 
@@ -154,17 +141,17 @@ export default function MainNavigation() {
     );
   };
 
-  const UserAvatar = ( photoURL ) => {
-    return (
-        <TouchableHighlight style={{height:40, width:40, borderRadius:40,}} onPress={() => navigation.navigate('Profile')}>
-            <Image 
-                style={{height:40, width:40, borderRadius:30}} 
-                source={photoURL ? {uri:photoURL} : require('../assets/profileImg/blank-profile-picture.png')}/>
-        </TouchableHighlight>
-    );
-}
-
   const AppStack = () => {
+    const UserAvatar = ( photoURL ) => {
+      return (
+          <TouchableHighlight style={{height:40, width:40, borderRadius:40,}} onPress={() => navigation.navigate('Profile')}>
+              <Image 
+                  style={{height:40, width:40, borderRadius:30}} 
+                  source={photoURL ? {uri:photoURL} : require('../assets/profileImg/blank-profile-picture.png')}/>
+          </TouchableHighlight>
+      );
+    }
+
     return (
       <Stack.Navigator screenOptions={{headerShown:false}}>
           <Stack.Screen name='Main' component={MainTab} />
@@ -204,7 +191,7 @@ export default function MainNavigation() {
   // Attach Auth state change listener
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return () => subscriber(); // unsubscribe on unmount
   }, []);
 
   // Check if user viewed onboarding before or not
@@ -224,11 +211,9 @@ export default function MainNavigation() {
   } else {
     return (
         <NavigationContainer>
-            {user ? <AppStack/> : <AuthStack/>}
+            {user ? <AppStack/> : <AuthStack viewedOnboarding={viewedOnboarding}/>}
         </NavigationContainer>
     );
   }
 }
 
-
-const styles = StyleSheet.create({});
